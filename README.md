@@ -21,7 +21,7 @@ The site is a night soccer field under floodlights. It loads pitch black, the fl
 
 [`/press`](http://localhost:3000/press) is the "press box": every section on one fast, plain page for recruiters, SEO, and mobile.
 
-> **Status:** Stage 2 (field). The scene at `/` has the floodlight intro and all eight spots opening real content. The player arrives in Stage 3.
+> **Status:** Stage 3 (player). A stick-figure player juggles at center, takes water breaks, and runs a routine at each spot before its panel opens. Sound, mobile, accessibility, and the illustrated art pass come in Stage 4.
 
 ## Stack
 
@@ -65,6 +65,7 @@ Open [localhost:3000/press](http://localhost:3000/press) for the press box and [
 | `npm run dev` | Dev server. Caching is off in dev, so every reload refetches. |
 | `npm run build && npm start` | Production build, which is where caching and revalidation apply. |
 | `npm run lint` | ESLint. |
+| `npm test` | Vitest: player routine and state-consistency tests. |
 | `npm run typegen` | Re-extract the schema and regenerate `src/sanity/types.ts`. Run after changing a schema or a GROQ query. |
 | `npm run seed` | Create placeholder documents in Sanity. |
 
@@ -113,6 +114,8 @@ src/
     api/revalidate/route.ts   Sanity webhook → revalidateTag
   scene/                      Canvas engine: 900×560 design space, drawing, intro, hit-testing.
                               Knows nothing about Sanity or React.
+    director.ts               Player routines (step queue, open/close per spot, idle water break)
+    player/                   PlayerRenderer interface + the procedural stick figure
   components/
     field/                    React host for the scene: canvas, tooltip, controls, panel shell
     panels/                   The eight panel layouts (content from Sanity)

@@ -18,7 +18,7 @@ Gomez Field: a portfolio as a 2D night soccer field. Full spec in `SPEC.md`; `re
 - `npm run dev` — dev server (`/press`, `/studio`). No caching in dev; use `npm run build && npm start` to test revalidation.
 - `npm run typegen` — after any schema or GROQ change. Commit the regenerated `src/sanity/types.ts`.
 - `npm run seed` — placeholder content (needs `npx sanity login`).
-- `npm run lint`, `npx tsc --noEmit` — before committing.
+- `npm run lint`, `npx tsc --noEmit`, `npm test` — before committing.
 
 ## Conventions
 
@@ -27,6 +27,7 @@ Gomez Field: a portfolio as a 2D night soccer field. Full spec in `SPEC.md`; `re
 - List ordering uses `orderRank` (@sanity/orderable-document-list). Experience sorts by `startDate desc`, `orderRank` for ties.
 - Images: `<SanityImage>` (Sanity CDN loader), never Vercel's optimizer.
 - Scene layering: `src/scene/` is pure canvas (no React/Sanity imports). `components/field/NightField` hosts it; `app/page.tsx` maps each `SpotKey` to a rendered panel from `components/panels/`. Scene coordinates come from `reference/prototype.html`.
+- Player: routines live in `scene/director.ts` (ported from the prototype's OPEN/CLOSE). Drawing goes through `PlayerRenderer`, so the Rive swap only replaces `player/stickFigure.ts`. Keep `director.test.ts` green when touching routines.
 - Run your own servers on port 3100; Chris's dev server uses 3000.
 - `@sanity/icons` v5: import from subpaths, e.g. `@sanity/icons/User`.
 - Next 16: `revalidateTag` needs a second arg; we use `{ expire: 0 }` for immediate freshness.
