@@ -21,6 +21,7 @@ import {
 } from "./draw";
 import { stickFigure } from "./player/stickFigure";
 import type { PlayerRenderer, PlayerState } from "./player/types";
+import { type Bounds, fitDesign, visibleBounds } from "./layout";
 import { createSceneState, type SceneState } from "./state";
 
 /** Things worth a sound. The scene only reports them; playing audio is someone else's job. */
@@ -54,8 +55,9 @@ const LIT = INTRO_FIRST_TOWER + TOWERS.length * INTRO_TOWER_GAP + INTRO_RAMP;
 const DRIBBLE_TOUCH_EVERY = 0.33;
 
 /**
- * Mounts the night field on a canvas. The canvas is sized by CSS; the engine
- * matches its backing store to the displayed size × devicePixelRatio.
+ * Mounts the night field on a canvas of any size. The design is fitted and centered
+ * (see layout.ts) and the scenery extends to the canvas edges. The backing store
+ * matches the displayed size × devicePixelRatio.
  */
 export function createNightField(
   canvas: HTMLCanvasElement,
@@ -79,22 +81,29 @@ export function createNightField(
   const staticLayer = document.createElement("canvas");
   const staticCtx = staticLayer.getContext("2d")!;
 
-  let scale = 1; // CSS px per design unit
+  let fit = fitDesign(W, H);
+  let bounds: Bounds = { left: 0, top: 0, right: W, bottom: H };
   let dpr = 1;
+
+  /** Design units → device pixels. */
+  const applyTransform = (c: CanvasRenderingContext2D) =>
+    c.setTransform(fit.scale * dpr, 0, 0, fit.scale * dpr, fit.ox * dpr, fit.oy * dpr);
 
   function resize() {
     const cssW = canvas.clientWidth || W;
+    const cssH = canvas.clientHeight || H;
     dpr = window.devicePixelRatio || 1;
-    scale = cssW / W;
+    fit = fitDesign(cssW, cssH);
+    bounds = visibleBounds(fit, cssW, cssH);
     const pxW = Math.round(cssW * dpr);
-    const pxH = Math.round(((cssW * H) / W) * dpr);
+    const pxH = Math.round(cssH * dpr);
     // Compare against the static layer, not the canvas: a new engine on a canvas that an
     // earlier engine already sized must still draw its own background.
     if (staticLayer.width === pxW && staticLayer.height === pxH) return;
     canvas.width = staticLayer.width = pxW;
     canvas.height = staticLayer.height = pxH;
-    staticCtx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
-    drawStatic(staticCtx, scenery);
+    applyTransform(staticCtx);
+    drawStatic(staticCtx, scenery, bounds);
   }
 
   const observer = new ResizeObserver(resize);
@@ -189,14 +198,14 @@ export function createNightField(
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.drawImage(staticLayer, 0, 0);
 
-    ctx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
+    applyTransform(ctx);
     drawDynamic(ctx, state, t);
     if (player.pose !== "sit") drawLongShadows(ctx, player.x, player.y, 30, towers);
     if (ball.mode !== "hidden") drawLongShadows(ctx, ball.x, ballGroundY(ball, player), 5, towers);
     drawBall(ctx, ball, player);
     renderPlayer.draw(ctx, { ...player, hasBag: state.bagOnBack }, t);
 
-    drawLighting(ctx, scenery, state, scoreboardName, { towers, level, t, dt });
+    drawLighting(ctx, scenery, state, scoreboardName, { towers, level, t, dt, bounds });
     drawSpotOutlines(ctx, state);
   }
   raf = requestAnimationFrame(frame);

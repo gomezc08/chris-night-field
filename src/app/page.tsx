@@ -45,16 +45,14 @@ export default async function Home() {
   return (
     <main className={styles.main}>
       <h1 className={styles.srOnly}>{data.profile?.name ?? "Portfolio"}</h1>
-      <div className={styles.frame}>
-        <NightField
-          scoreboardName={data.siteSettings?.scoreboardName ?? "GOMEZ FC"}
-          ambientTrackUrl={data.siteSettings?.ambientTrack?.url}
-          panels={panels}
-        />
-        <p className={styles.pressLink}>
-          <Link href="/press">Press box: everything on one page →</Link>
-        </p>
-      </div>
+      <NightField
+        scoreboardName={data.siteSettings?.scoreboardName ?? "GOMEZ FC"}
+        ambientTrackUrl={data.siteSettings?.ambientTrack?.url}
+        panels={panels}
+      />
+      <Link href="/press" className={styles.pressLink}>
+        Press box: everything on one page →
+      </Link>
     </main>
   );
 }

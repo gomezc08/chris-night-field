@@ -4,9 +4,11 @@ import { type ReactNode, useCallback, useEffect, useRef, useState } from "react"
 
 import { H, SPOTS, type SpotKey, W } from "@/scene/constants";
 import { createNightField, type NightField as Engine } from "@/scene/engine";
+import { type Fit, fitDesign } from "@/scene/layout";
 import { createSoundboard, type Soundboard } from "@/scene/sound";
 
 import styles from "./field.module.css";
+import { EyeIcon, MusicIcon } from "./icons";
 import { useMediaQuery } from "./useMediaQuery";
 
 type Props = {
@@ -33,8 +35,6 @@ const TAB_ORDER: SpotKey[] = [
 
 const MOBILE = "(max-width: 700px)";
 
-const pct = (n: number, of: number) => `${(n / of) * 100}%`;
-
 export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -51,10 +51,20 @@ export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
   const [showAllPref, setShowAll] = useState(false);
   const [tip, setTip] = useState<Tip | null>(null);
   const [muted, setMuted] = useState(true);
+  // Where the design sits in the full-window stage; spot buttons and chips follow it.
+  const [fit, setFit] = useState<Fit>(() => fitDesign(W, H));
 
   const isMobile = useMediaQuery(MOBILE);
   // On phones the spots are too small to discover by hovering, so labels are always on.
   const showAll = showAllPref || isMobile;
+
+  useEffect(() => {
+    const stage = stageRef.current!;
+    const measure = () => setFit(fitDesign(stage.clientWidth, stage.clientHeight));
+    const observer = new ResizeObserver(measure);
+    observer.observe(stage);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const sound = createSoundboard(ambientTrackUrl);
@@ -130,11 +140,11 @@ export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
 
   /** Keyboard focus has no pointer, so anchor the tooltip next to the spot. */
   function tipAtSpot(key: SpotKey) {
-    const r = stageRef.current!.getBoundingClientRect();
+    const width = stageRef.current!.clientWidth;
     const [x, y, , h] = SPOTS[key].rect;
-    const s = r.width / W;
-    const top = y > 400 ? (y - 26) * s : (y + h + 6) * s;
-    return { x: Math.min(Math.max(x * s, 4), r.width - 170), y: top };
+    const { scale, ox, oy } = fit;
+    const top = oy + (y > 400 ? (y - 26) * scale : (y + h + 6) * scale);
+    return { x: Math.min(Math.max(ox + x * scale, 4), width - 170), y: top };
   }
 
   /** Keep Tab inside the open panel. */
@@ -181,7 +191,12 @@ export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
                   }}
                   type="button"
                   className={styles.spot}
-                  style={{ left: pct(x, W), top: pct(y, H), width: pct(w, W), height: pct(h, H) }}
+                  style={{
+                    left: fit.ox + x * fit.scale,
+                    top: fit.oy + y * fit.scale,
+                    width: w * fit.scale,
+                    height: h * fit.scale,
+                  }}
                   aria-label={`${section}: ${object.toLowerCase()}`}
                   aria-expanded={active === key}
                   aria-controls="field-panel"
@@ -235,30 +250,48 @@ export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
 
         <div className={styles.controls}>
           {!isMobile && (
-            <button type="button" onClick={() => setShowAll((v) => !v)} aria-pressed={showAllPref}>
-              {showAllPref ? "Hide spots" : "Show all spots"}
+            <button
+              type="button"
+              className={styles.iconButton}
+              onClick={() => setShowAll((v) => !v)}
+              aria-pressed={showAllPref}
+              aria-label="Show all spots"
+              title={showAllPref ? "Hide spots" : "Show all spots"}
+            >
+              <EyeIcon off={!showAllPref} />
             </button>
           )}
-          <button type="button" onClick={() => setMuted((m) => !m)} aria-pressed={!muted}>
-            {muted ? "Sound off" : "Sound on"}
+          <button
+            type="button"
+            className={styles.iconButton}
+            onClick={() => setMuted((m) => !m)}
+            aria-pressed={!muted}
+            aria-label="Music"
+            title={muted ? "Turn music on" : "Turn music off"}
+          >
+            <MusicIcon off={muted} />
           </button>
         </div>
-      </div>
 
-      {isMobile && (
-        <nav className={styles.chips} aria-label="Sections">
-          {TAB_ORDER.map((key) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => select(key)}
-              aria-pressed={active === key}
-            >
-              {SPOTS[key].section}
-            </button>
-          ))}
-        </nav>
-      )}
+        {isMobile && (
+          <nav
+            className={styles.chips}
+            style={{ top: fit.oy + H * fit.scale + 12 }}
+            aria-label="Sections"
+          >
+            {TAB_ORDER.map((key) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => select(key)}
+                aria-pressed={active === key}
+              >
+                {SPOTS[key].section}
+              </button>
+            ))}
+          </nav>
+        )}
+      </div>
     </>
   );
 }

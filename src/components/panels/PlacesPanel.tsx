@@ -19,9 +19,9 @@ export function PlacesPanel({ places }: { places: SiteContent["places"] }) {
         <SanityImage
           key={place._id}
           image={place.photo}
-          width={300}
-          aspect={4 / 3}
-          sizes="300px"
+          width={700}
+          aspect={16 / 10}
+          sizes="(max-width: 760px) 100vw, 700px"
           className={s.placePhoto}
         />
         <h3 className={s.h3}>

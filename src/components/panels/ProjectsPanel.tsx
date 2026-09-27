@@ -47,9 +47,9 @@ export function ProjectsPanel({ projects }: { projects: SiteContent["projects"] 
                       <SanityImage
                         key={img.asset?._ref ?? i}
                         image={img}
-                        width={300}
+                        width={700}
                         aspect={16 / 10}
-                        sizes="300px"
+                        sizes="(max-width: 760px) 100vw, 700px"
                       />
                     ))}
                   </div>
