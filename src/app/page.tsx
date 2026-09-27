@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { siteMetadata } from "@/lib/metadata";
 import { NightField } from "@/components/field/NightField";
 import { PlacesPanel } from "@/components/panels/PlacesPanel";
 import { ProjectsPanel } from "@/components/panels/ProjectsPanel";
@@ -23,11 +24,7 @@ async function getContent() {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { profile, siteSettings } = await getContent();
-  return {
-    title: siteSettings?.seoTitle ?? profile?.name ?? undefined,
-    description: siteSettings?.seoDescription ?? profile?.headline ?? undefined,
-  };
+  return siteMetadata(await getContent(), "/");
 }
 
 export default async function Home() {

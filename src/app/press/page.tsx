@@ -14,8 +14,8 @@ import {
 } from "@/components/press/sections";
 import styles from "@/components/press/press.module.css";
 import { SanityImage } from "@/components/SanityImage";
+import { siteMetadata } from "@/lib/metadata";
 import { sanityFetch } from "@/sanity/lib/fetch";
-import { urlFor } from "@/sanity/lib/image";
 import { CONTENT_TAGS, PRESS_QUERY } from "@/sanity/queries";
 
 async function getPress() {
@@ -23,19 +23,8 @@ async function getPress() {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { profile, siteSettings } = await getPress();
-  const title = siteSettings?.seoTitle ?? profile?.name ?? undefined;
-  const description = siteSettings?.seoDescription ?? profile?.headline ?? undefined;
-  const og = siteSettings?.ogImage?.asset
-    ? urlFor(siteSettings.ogImage).width(1200).height(630).url()
-    : undefined;
-
-  return {
-    title: title ? `Press box · ${title}` : "Press box",
-    description,
-    alternates: { canonical: "/press" },
-    openGraph: { title, description, images: og ? [{ url: og, width: 1200, height: 630 }] : [] },
-  };
+  const meta = siteMetadata(await getPress(), "/press");
+  return { ...meta, title: meta.title ? `Press box · ${meta.title}` : "Press box" };
 }
 
 export default async function PressPage() {
