@@ -27,7 +27,15 @@ export function NightField({ scoreboardName, panels }: Props) {
   const [tip, setTip] = useState<Tip | null>(null);
 
   useEffect(() => {
-    const engine = createNightField(canvasRef.current!, { scoreboardName });
+    const engine = createNightField(canvasRef.current!, {
+      scoreboardName,
+      // The player walks over first; the panel opens when his routine ends.
+      onOpen: (key) => {
+        setActive(key);
+        setShown(key);
+      },
+      onHide: () => setActive(null),
+    });
     engineRef.current = engine;
     return () => {
       engine.destroy();
@@ -40,18 +48,10 @@ export function NightField({ scoreboardName, panels }: Props) {
   useEffect(() => engineRef.current?.setScoreboardName(scoreboardName), [scoreboardName]);
 
   useEffect(() => {
-    const engine = engineRef.current;
-    if (!engine) return;
-    engine.state.active = active;
-    engine.state.showAll = showAll;
-  }, [active, showAll]);
+    if (engineRef.current) engineRef.current.state.showAll = showAll;
+  }, [showAll]);
 
-  const open = useCallback((key: SpotKey) => {
-    setActive(key);
-    setShown(key);
-  }, []);
-
-  const close = useCallback(() => setActive(null), []);
+  const close = useCallback(() => engineRef.current?.close(), []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -78,9 +78,11 @@ export function NightField({ scoreboardName, panels }: Props) {
   }
 
   function onClick(e: React.MouseEvent<HTMLCanvasElement>) {
-    const key = engineRef.current?.hitTest(e.clientX, e.clientY);
-    if (key) open(key);
-    else close();
+    const engine = engineRef.current;
+    if (!engine) return;
+    const key = engine.hitTest(e.clientX, e.clientY);
+    if (key) engine.select(key);
+    else engine.close();
   }
 
   const panel = shown ? SPOTS[shown] : null;
