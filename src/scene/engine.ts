@@ -48,6 +48,8 @@ export type NightField = {
   /** Outline every spot; labels can be turned off where they'd be too small to read. */
   setShowAll: (on: boolean, labels?: boolean) => void;
   setScoreboardName: (name: string) => void;
+  /** Cut the floodlights and run the switch-on sequence again (clicking a tower). */
+  replayLights: () => void;
   destroy: () => void;
 };
 
@@ -249,6 +251,9 @@ export function createNightField(
     setShowAll: (on, labels = true) => {
       state.showAll = on;
       state.showLabels = labels;
+    },
+    replayLights: () => {
+      lightTime = 0;
     },
     setScoreboardName: (name) => {
       scoreboardName = name;
