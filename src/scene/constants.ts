@@ -24,14 +24,14 @@ export type Spot = {
 };
 
 export const SPOTS: Record<SpotKey, Spot> = {
-  bag: { section: "About me", object: "Bag on the bench", rect: [346, 496, 44, 22] },
+  bag: { section: "Credits", object: "Bag on the bench", rect: [346, 496, 44, 22] },
   goalR: { section: "Projects", object: "Home goal", rect: [836, 262, 40, 106] },
   goalL: { section: "Links", object: "Away goal", rect: [24, 262, 40, 106] },
   score: { section: "Experience", object: "Scoreboard", rect: [608, 26, 164, 80] },
   board: { section: "Education", object: "Tactics board", rect: [280, 486, 36, 42] },
   flag: { section: "Places I've lived", object: "Corner flag", rect: [832, 444, 50, 50] },
   ballbag: { section: "Skills and stack", object: "Ball bag", rect: [598, 494, 36, 34] },
-  stands: { section: "Credits", object: "Bleachers", rect: [180, 62, 380, 72] },
+  stands: { section: "About me", object: "Bleachers", rect: [180, 62, 380, 72] },
 };
 
 export const SPOT_KEYS = Object.keys(SPOTS) as SpotKey[];

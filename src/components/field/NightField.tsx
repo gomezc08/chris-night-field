@@ -23,14 +23,14 @@ type Tip = { key: SpotKey; x: number; y: number };
 
 /** Tab order follows the /press section order, not the layout. */
 const TAB_ORDER: SpotKey[] = [
-  "bag",
+  "stands", // About me
   "goalR",
   "score",
   "board",
   "ballbag",
   "flag",
   "goalL",
-  "stands",
+  "bag", // Credits
 ];
 
 const MOBILE = "(max-width: 700px)";

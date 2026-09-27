@@ -23,7 +23,7 @@ export type PlayerState = {
 };
 
 export type PlayerView = PlayerState & {
-  /** The duffel bag is on his back (About me). */
+  /** The duffel bag is on his back (the bench bag spot is open). */
   hasBag: boolean;
 };
 

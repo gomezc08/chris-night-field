@@ -35,14 +35,14 @@ export default async function Home() {
 
   // Which content each spot on the field opens.
   const panels: Record<SpotKey, React.ReactNode> = {
-    bag: <AboutPanel profile={data.profile} />,
+    bag: <CreditsPanel credits={data.credits} />,
     goalR: <ProjectsPanel projects={data.projects} />,
     goalL: <LinksPanel links={data.links} />,
     score: <ExperiencePanel experience={data.experience} />,
     board: <EducationPanel education={data.education} />,
     flag: <PlacesPanel places={data.places} />,
     ballbag: <SkillsPanel skillGroups={data.skillGroups} />,
-    stands: <CreditsPanel credits={data.credits} />,
+    stands: <AboutPanel profile={data.profile} />,
   };
 
   return (
