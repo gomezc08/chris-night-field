@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "typegen": "sanity schema extract --enforce-required-fields --force && sanity typegen generate",
-    "seed": "sanity exec scripts/seed.ts --with-user-token"
+    "seed": "sanity exec scripts/seed.ts --with-user-token",
+    "test": "vitest run"
   },
   "dependencies": {
     "@portabletext/react": "^8.0.1",
@@ -24,12 +25,13 @@
     "styled-components": "^6.5.3"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^24.19.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^5.0.2"
   },
   "engines": {
     "node": ">=20.9.0"
