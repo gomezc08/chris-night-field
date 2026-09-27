@@ -21,7 +21,7 @@ The site is a night soccer field under floodlights. It loads pitch black, the fl
 
 [`/press`](http://localhost:3000/press) is the "press box": every section on one fast, plain page for recruiters, SEO, and mobile.
 
-> **Status:** Stage 1 (plumbing). `/press` and `/studio` work; `/` is a placeholder link to `/press`. The scene arrives in Stage 2.
+> **Status:** Stage 2 (field). The scene at `/` has the floodlight intro and all eight spots opening real content. The player arrives in Stage 3.
 
 ## Stack
 
@@ -107,11 +107,15 @@ Hit **Publish** and the live site updates within a few seconds. No redeploy need
 ```
 src/
   app/
-    page.tsx                  /  (placeholder; the scene lands in Stage 2)
+    page.tsx                  /  the night field (fetches content, maps spots to panels)
     press/page.tsx            /press, the press box
     studio/[[...tool]]/       /studio, embedded Sanity Studio
     api/revalidate/route.ts   Sanity webhook → revalidateTag
+  scene/                      Canvas engine: 900×560 design space, drawing, intro, hit-testing.
+                              Knows nothing about Sanity or React.
   components/
+    field/                    React host for the scene: canvas, tooltip, controls, panel shell
+    panels/                   The eight panel layouts (content from Sanity)
     press/                    Press box sections and styles
     SanityImage.tsx           next/image backed by Sanity's CDN
     RichText.tsx              Portable Text renderer
