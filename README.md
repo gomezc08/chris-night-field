@@ -15,7 +15,7 @@ The site has four pages, each with a back button:
 | `/field` | The scene: a full-window night soccer field. |
 | `/press` | The press box, reached from the round profile button on every page. |
 
-On the field, it starts pitch black, the floodlight towers click on one at a time, and a lone player juggles at the center circle. Eight objects around the field are the navigation. Clicking one sends the player over to do something, then opens a frosted panel with that section:
+On the field, the first visit of a session starts pitch black (after that the lights are already on, and clicking any floodlight replays it), the floodlight towers click on one at a time, and a lone player juggles at the center circle. Eight objects around the field are the navigation. Clicking one sends the player over to do something, then opens a frosted panel with that section:
 
 | Spot | Section |
 |---|---|
@@ -30,7 +30,7 @@ On the field, it starts pitch black, the floodlight towers click on one at a tim
 
 [`/press`](http://localhost:3000/press) is the "press box": every section on one fast, plain page for recruiters, SEO, and mobile.
 
-Between visits to the spots, the player juggles and wanders over to the water bottles for a drink. Goals ripple the net and tick up the scoreboard. A soft late-night lo-fi loop (or your own track from Site settings) plays across the start screen, About, the field, and the press box, starting on the visitor's first click, with quiet ball touches, floodlight knocks, and the net swish on the field. The music button (bottom-left on every page) turns it off, and that choice is remembered. First-time visitors get a handwritten hint pointing at the "show all spots" eye button.
+Between visits to the spots, the player juggles and wanders over to the water bottles for a drink. Goals ripple the net and tick up the scoreboard, including the corner kick, where a teammate appears from nowhere to head Chris's cross into the goal. A soft late-night lo-fi loop (or your own track from Site settings) plays across the start screen, About, the field, and the press box, starting on the visitor's first click, with quiet ball touches, floodlight knocks, and the net swish on the field. The music button (bottom-left on every page) turns it off, and that choice is remembered. First-time visitors get a handwritten hint pointing at the "show all spots" eye button.
 
 It also works for everyone:
 
@@ -135,6 +135,7 @@ src/
     director.ts               Player routines (step queue, open/close per spot, idle water break)
     layout.ts                 Fits the 900×560 design into a window of any shape
     player/                   PlayerRenderer interface + the procedural stick figure
+    teammate.ts               The corner-kick teammate who runs in, heads it home, and leaves
     sound.ts                  Howler soundboard (music + scene cues), owned by components/sound
   components/
     field/                    React host for the scene: canvas, tooltip, controls, panel shell

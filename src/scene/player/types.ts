@@ -12,7 +12,8 @@ export type Pose =
   | "wind"
   | "point"
   | "drink"
-  | "sit";
+  | "sit"
+  | "header";
 
 export type PlayerState = {
   x: number;
@@ -25,6 +26,8 @@ export type PlayerState = {
 export type PlayerView = PlayerState & {
   /** The duffel bag is on his back (the bench bag spot is open). */
   hasBag: boolean;
+  /** Body color; the teammate who heads in the corner is tinted to tell him apart. */
+  tint?: string;
 };
 
 /**

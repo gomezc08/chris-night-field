@@ -1,5 +1,6 @@
 import { type Ball, kick, rest } from "./ball";
 import { CENTER, type SpotKey } from "./constants";
+import { arrive, createTeammate, leave, type Teammate, updateTeammate } from "./teammate";
 import type { Pose, PlayerState } from "./player/types";
 import type { SceneState } from "./state";
 
@@ -39,6 +40,13 @@ export type DirectorEvents = {
   onHide: () => void;
 };
 
+// Corner-kick header: where the teammate appears, meets the ball, and leaves to.
+const TEAMMATE_FROM = [560, 190] as const;
+const HEADER_SPOT = [778, 302] as const;
+const TEAMMATE_EXIT = [905, 190] as const;
+/** Ball height at his forehead, in design units above the ground. */
+const HEAD_HEIGHT = 32;
+
 const IDLE_BREAK_MIN = 10;
 const IDLE_BREAK_SPAN = 30;
 /** Don't start the water-break timer until the lights are up. */
@@ -58,6 +66,7 @@ export function createDirector(
   player: PlayerState,
   ball: Ball,
   events: DirectorEvents,
+  teammate: Teammate = createTeammate(),
 ): Director {
   let phase: Phase = "idle";
   let queue: Step[] = [];
@@ -88,6 +97,12 @@ export function createDirector(
     state.ripple[side] = 1;
     state.homeScore++;
     state.flash = 1.6;
+  };
+
+  /** Called when the corner cross reaches the teammate's head. */
+  const header = () => {
+    teammate.pose = "header";
+    kick(ball, 856, 318, 0.35, 3, scoreGoal("R"), { from: HEAD_HEIGHT, to: 8 });
   };
 
   const backToCenter = (): Step[] => [
@@ -166,21 +181,36 @@ export function createDirector(
       openPanel("board"),
     ],
 
-    // Place the ball on the corner arc, wind up, run in, and cross it into the box.
+    // Place the ball on the corner arc and cross it in. A teammate appears from nowhere,
+    // sprints into the box, and heads it into the home goal. They celebrate.
     flag: () => [
       dribble,
       move(800, 470),
       act(() => {
         rest(ball, 836, 487);
         player.facing = 1;
+        arrive(teammate, TEAMMATE_FROM, HEADER_SPOT);
       }),
       wait(0.6, "wind"),
       move(828, 483, 110),
-      wait(0.22, "shoot", undefined, () => kick(ball, 700, 262, 0.9, 70)),
+      wait(0.22, "shoot", undefined, () =>
+        // The cross meets his forehead; the header goes straight into the net.
+        kick(ball, HEADER_SPOT[0] + 8, HEADER_SPOT[1], 0.9, 70, header, { to: HEAD_HEIGHT }),
+      ),
       wait(0.4, "shoot"),
       act(() => {
         player.facing = -1;
         player.pose = "point";
+      }),
+      wait(0.75, "point"), // the cross lands, the header, the net
+      act(() => {
+        teammate.pose = "cele";
+        teammate.facing = -1;
+      }),
+      wait(1.1, "cele"),
+      act(() => {
+        player.pose = "point";
+        teammate.pose = "stand";
       }),
       openPanel("flag"),
     ],
@@ -219,7 +249,8 @@ export function createDirector(
     goalL: () => [move(70, 300)],
     score: () => [],
     board: () => [wait(0.45, "crouch", () => (state.boardHeld = false))],
-    flag: () => [move(704, 266)], // jog to where the cross landed
+    // The teammate jogs off into nowhere; Chris fetches the ball from the net.
+    flag: () => [act(() => leave(teammate, TEAMMATE_EXIT)), move(826, 318)],
     ballbag: () => [
       wait(0.5, "crouch", () => {
         state.ballInBag = false;
@@ -314,6 +345,7 @@ export function createDirector(
 
   function update(dt: number, lightTime: number) {
     step(dt);
+    updateTeammate(teammate, dt);
 
     if (phase === "idle" && lightTime > IDLE_AFTER_INTRO) {
       idleTime += dt;

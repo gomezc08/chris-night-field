@@ -3,7 +3,7 @@
 import { Amatic_SC } from "next/font/google";
 import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 
-import { H, SPOTS, type SpotKey, W } from "@/scene/constants";
+import { H, type Rect, SPOTS, type SpotKey, TOWERS, W } from "@/scene/constants";
 import { createNightField, type NightField as Engine } from "@/scene/engine";
 import { type Fit, fitDesign } from "@/scene/layout";
 import { useSound } from "@/components/sound/SoundProvider";
@@ -18,7 +18,7 @@ type Props = {
   panels: Record<SpotKey, ReactNode>;
 };
 
-type Tip = { key: SpotKey; x: number; y: number };
+type Tip = { label: string; x: number; y: number };
 
 /** Tab order follows the /press section order, not the layout. */
 const TAB_ORDER: SpotKey[] = [
@@ -40,19 +40,30 @@ const amatic = Amatic_SC({ weight: ["700"], subsets: ["latin"] });
 const HINT_DELAY_MS = 3500;
 const HINT_KEY = "night-field:hint-seen";
 
-function hintSeen() {
+/**
+ * The floodlight intro plays on the first visit of a session; after that the lights are
+ * already on. Marked seen only once it has played (dev mode mounts the scene twice).
+ */
+const INTRO_KEY = "night-field:intro-seen";
+const INTRO_MS = 3800;
+
+/** Clickable area around each floodlight head: clicking one replays the lights. */
+const TOWER_HITS: Rect[] = TOWERS.map(([x, y]) => [x - 20, y - 12, 40, 44]);
+const TOWER_TIP = "Floodlight · Replay the lights";
+
+function seen(key: string) {
   try {
-    return sessionStorage.getItem(HINT_KEY) === "1";
+    return sessionStorage.getItem(key) === "1";
   } catch {
     return false;
   }
 }
 
-function markHintSeen() {
+function markSeen(key: string) {
   try {
-    sessionStorage.setItem(HINT_KEY, "1");
+    sessionStorage.setItem(key, "1");
   } catch {
-    // Storage blocked: the hint may show again next visit.
+    // Storage blocked: it may show again next visit.
   }
 }
 
@@ -89,20 +100,20 @@ export function NightField({ scoreboardName, panels }: Props) {
 
   // First visit this session: once the floodlights are up, point at the eye button.
   useEffect(() => {
-    if (window.matchMedia(MOBILE).matches || hintSeen()) return;
+    if (window.matchMedia(MOBILE).matches || seen(HINT_KEY)) return;
     const timer = setTimeout(() => setHint(true), HINT_DELAY_MS);
     return () => clearTimeout(timer);
   }, []);
 
   function dismissHint() {
     setHint(false);
-    markHintSeen();
+    markSeen(HINT_KEY);
   }
 
   useEffect(() => {
     const engine = createNightField(canvasRef.current!, {
       scoreboardName,
-      skipIntro: window.matchMedia(MOBILE).matches,
+      skipIntro: window.matchMedia(MOBILE).matches || seen(INTRO_KEY),
       // The player walks over first; the panel opens when his routine ends.
       onOpen: (key) => {
         setActive(key);
@@ -112,7 +123,9 @@ export function NightField({ scoreboardName, panels }: Props) {
       onSound: play,
     });
     engineRef.current = engine;
+    const introPlayed = setTimeout(() => markSeen(INTRO_KEY), INTRO_MS);
     return () => {
+      clearTimeout(introPlayed);
       engine.destroy();
       engineRef.current = null;
     };
@@ -151,7 +164,13 @@ export function NightField({ scoreboardName, panels }: Props) {
 
   function hover(key: SpotKey | null, tipAt?: { x: number; y: number }) {
     engineRef.current?.setHover(key);
-    setTip(key && tipAt ? { key, ...tipAt } : null);
+    setTip(
+      key && tipAt ? { label: `${SPOTS[key].object} · ${SPOTS[key].section}`, ...tipAt } : null,
+    );
+  }
+
+  function hoverTower(tipAt: { x: number; y: number } | null) {
+    setTip(tipAt ? { label: TOWER_TIP, ...tipAt } : null);
   }
 
   /** Tooltip follows the pointer, clamped so it stays inside the scene. */
@@ -161,9 +180,8 @@ export function NightField({ scoreboardName, panels }: Props) {
   }
 
   /** Keyboard focus has no pointer, so anchor the tooltip next to the spot. */
-  function tipAtSpot(key: SpotKey) {
+  function tipAtRect([x, y, , h]: Rect) {
     const width = stageRef.current!.clientWidth;
-    const [x, y, , h] = SPOTS[key].rect;
     const { scale, ox, oy } = fit;
     const top = oy + (y > 400 ? (y - 26) * scale : (y + h + 6) * scale);
     return { x: Math.min(Math.max(ox + x * scale, 4), width - 170), y: top };
@@ -226,7 +244,7 @@ export function NightField({ scoreboardName, panels }: Props) {
                   onPointerEnter={(e) => e.pointerType === "mouse" && hover(key, tipAtPointer(e))}
                   onPointerMove={(e) => e.pointerType === "mouse" && hover(key, tipAtPointer(e))}
                   onPointerLeave={() => hover(null)}
-                  onFocus={(e) => e.target.matches(":focus-visible") && hover(key, tipAtSpot(key))}
+                  onFocus={(e) => e.target.matches(":focus-visible") && hover(key, tipAtRect(rect))}
                   onBlur={() => hover(null)}
                 />
               </li>
@@ -234,12 +252,34 @@ export function NightField({ scoreboardName, panels }: Props) {
           })}
         </ul>
 
+        {/* Easter egg: any floodlight replays the switch-on sequence. */}
+        {TOWER_HITS.map((rect, i) => (
+          <button
+            key={i}
+            type="button"
+            className={styles.spot}
+            style={{
+              left: fit.ox + rect[0] * fit.scale,
+              top: fit.oy + rect[1] * fit.scale,
+              width: rect[2] * fit.scale,
+              height: rect[3] * fit.scale,
+            }}
+            aria-label="Replay the floodlights"
+            onClick={() => engineRef.current?.replayLights()}
+            onPointerEnter={(e) => e.pointerType === "mouse" && hoverTower(tipAtPointer(e))}
+            onPointerMove={(e) => e.pointerType === "mouse" && hoverTower(tipAtPointer(e))}
+            onPointerLeave={() => hoverTower(null)}
+            onFocus={(e) => e.target.matches(":focus-visible") && hoverTower(tipAtRect(rect))}
+            onBlur={() => hoverTower(null)}
+          />
+        ))}
+
         <div
           className={styles.tip}
           style={tip ? { left: tip.x, top: tip.y, opacity: 1 } : { opacity: 0 }}
           aria-hidden
         >
-          {tip && `${SPOTS[tip.key].object} · ${SPOTS[tip.key].section}`}
+          {tip?.label}
         </div>
 
         <aside

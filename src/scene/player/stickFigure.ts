@@ -7,7 +7,7 @@ const BODY = "#e9eef3";
 
 /** Procedural stick figure, ported from the prototype's drawPlayer(). Origin is at his feet. */
 export const stickFigure: PlayerRenderer = {
-  draw(ctx, { x, y, facing, pose, hasBag }: PlayerView, t) {
+  draw(ctx, { x, y, facing, pose, hasBag, tint = BODY }: PlayerView, t) {
     ctx.save();
     ctx.translate(x, y);
 
@@ -126,6 +126,18 @@ export const stickFigure: PlayerRenderer = {
         le = [4, -6];
         re = [5, -5];
         break;
+      case "header":
+        // Up off the ground, leaning into the ball with the forehead, arms back for balance.
+        hip = [0, -18];
+        sh = [4, -30];
+        hd = [8, -35];
+        lf = [-5, -5];
+        rf = [3, -4];
+        lk = [-3, -11];
+        rk = [4, -11];
+        lh = [-9, -22];
+        rh = [-5, -20];
+        break;
       case "stand":
         break;
     }
@@ -137,7 +149,7 @@ export const stickFigure: PlayerRenderer = {
       ctx.fill();
     }
 
-    ctx.strokeStyle = BODY;
+    ctx.strokeStyle = tint;
     ctx.lineWidth = 2.6;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
@@ -147,7 +159,7 @@ export const stickFigure: PlayerRenderer = {
     limb(ctx, sh, le ?? lh, le ? lh : undefined);
     limb(ctx, sh, re ?? rh, re ? rh : undefined);
 
-    ctx.fillStyle = BODY;
+    ctx.fillStyle = tint;
     ctx.beginPath();
     ctx.arc(hd[0], hd[1], 4.5, 0, Math.PI * 2);
     ctx.fill();

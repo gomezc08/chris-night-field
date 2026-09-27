@@ -13,6 +13,9 @@ type Flight = {
   duration: number;
   /** Peak height of the arc in design units. */
   arc: number;
+  /** Height above the ground at the start and end of the flight (e.g. 30 for head height). */
+  fromLift: number;
+  toLift: number;
   onLand?: () => void;
 };
 
@@ -27,6 +30,10 @@ export function createBall(): Ball {
   return { x: 0, y: 0, mode: "juggle", flight: null };
 }
 
+/**
+ * Sends the ball from where it rests to (toX, toY) on the ground. `lift` lets a flight
+ * start or finish in the air, e.g. a cross that meets a header at head height.
+ */
 export function kick(
   ball: Ball,
   toX: number,
@@ -34,9 +41,21 @@ export function kick(
   duration: number,
   arc: number,
   onLand?: () => void,
+  lift: { from?: number; to?: number } = {},
 ) {
   ball.mode = "fly";
-  ball.flight = { fromX: ball.x, fromY: ball.y, toX, toY, progress: 0, duration, arc, onLand };
+  ball.flight = {
+    fromX: ball.x,
+    fromY: ball.y,
+    toX,
+    toY,
+    progress: 0,
+    duration,
+    arc,
+    fromLift: lift.from ?? 0,
+    toLift: lift.to ?? 0,
+    onLand,
+  };
 }
 
 export function rest(ball: Ball, x: number, y: number) {
@@ -60,8 +79,9 @@ export function updateBall(ball: Ball, player: PlayerState, t: number, dt: numbe
       const f = ball.flight!;
       f.progress += dt / f.duration;
       const k = Math.min(1, f.progress);
+      const height = f.fromLift * (1 - k) + f.toLift * k + Math.sin(k * Math.PI) * f.arc;
       ball.x = f.fromX + (f.toX - f.fromX) * k;
-      ball.y = f.fromY + (f.toY - f.fromY) * k - Math.sin(k * Math.PI) * f.arc;
+      ball.y = f.fromY + (f.toY - f.fromY) * k - height;
       if (k >= 1) {
         const onLand = f.onLand;
         rest(ball, f.toX, f.toY);

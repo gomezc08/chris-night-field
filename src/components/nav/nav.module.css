@@ -46,11 +46,6 @@
   right: 20px;
 }
 
-/* In the page flow (e.g. at the top of /press) instead of floating. */
-.inline {
-  position: static;
-}
-
 @media (max-width: 700px) {
   .round {
     width: 46px;
@@ -68,5 +63,11 @@
 
   .topRight {
     right: 14px;
+  }
+}
+
+@media print {
+  .round {
+    display: none;
   }
 }

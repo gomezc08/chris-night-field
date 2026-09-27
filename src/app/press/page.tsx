@@ -49,9 +49,7 @@ export default async function PressPage() {
       <a href="#main" className={styles.skip}>
         Skip to content
       </a>
-      <div className={styles.back}>
-        <BackButton href="/field" label="Back to the field" inline />
-      </div>
+      <BackButton href="/field" label="Back to the field" />
       <header className={styles.header}>
         {profile?.photo && (
           <SanityImage

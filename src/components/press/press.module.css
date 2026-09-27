@@ -17,6 +17,13 @@
   line-height: 1.65;
 }
 
+/* Where the centered column reaches the corners, leave room for the fixed back and profile buttons. */
+@media (max-width: 900px) {
+  .page {
+    padding-top: 5.5rem;
+  }
+}
+
 :global(body):has(.page) {
   background: #070a10;
 }
@@ -48,10 +55,6 @@
   padding: 0.5rem 0.75rem;
   background: var(--surface);
   z-index: 10;
-}
-
-.back {
-  margin-bottom: 1.5rem;
 }
 
 .header {
@@ -351,7 +354,6 @@
   }
 
   .toc,
-  .back,
   .skip,
   .footer {
     display: none;
