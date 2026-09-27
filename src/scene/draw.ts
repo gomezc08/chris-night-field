@@ -1,4 +1,5 @@
-import { COLORS, H, SPOTS, SPOT_KEYS, TOWERS, W } from "./constants";
+import { COLORS, SPOTS, SPOT_KEYS, TOWERS, W } from "./constants";
+import type { Bounds } from "./layout";
 import type { SceneState } from "./state";
 
 type Ctx = CanvasRenderingContext2D;
@@ -15,15 +16,28 @@ export type Scenery = {
 const inStructure = (x: number, y: number) =>
   (x >= 606 && x <= 774 && y >= 24) || (x >= 176 && x <= 564 && y >= 66);
 
+/**
+ * The sky and skyline extend well past the 900-wide design so a full-window canvas of
+ * any shape has scenery to its edges. Only the part inside the visible bounds is drawn.
+ */
+const SCENERY_LEFT = -1600;
+const SCENERY_RIGHT = W + 1600;
+const SKY_TOP = -700;
+const STAR_COUNT = 700;
+
 export function createScenery(rand: () => number = Math.random): Scenery {
   const stars: Scenery["stars"] = [];
-  while (stars.length < 60) {
-    const star: Scenery["stars"][number] = [rand() * W, rand() * 80, rand()];
+  while (stars.length < STAR_COUNT) {
+    const star: Scenery["stars"][number] = [
+      SCENERY_LEFT + rand() * (SCENERY_RIGHT - SCENERY_LEFT),
+      SKY_TOP + rand() * (80 - SKY_TOP),
+      rand(),
+    ];
     if (!inStructure(star[0], star[1])) stars.push(star);
   }
 
   const city: Scenery["city"] = [];
-  for (let x = 0; x < W; ) {
+  for (let x = SCENERY_LEFT; x < SCENERY_RIGHT;) {
     const w = 20 + rand() * 40;
     const h = 12 + rand() * 30;
     const windows: Pt[] = [];
@@ -69,16 +83,20 @@ function dot(ctx: Ctx, x: number, y: number, r: number) {
 
 // --- Static layer (drawn once per resize) ---------------------------------------
 
+/** Fills the whole visible area (design units), which may extend past the 900 × 560 design. */
+const fillBounds = (ctx: Ctx, b: Bounds) =>
+  ctx.fillRect(b.left - 1, b.top - 1, b.right - b.left + 2, b.bottom - b.top + 2);
+
 /** Everything that never changes: sky, skyline, stands, towers, pitch, bench, bottles, ball bag. */
-export function drawStatic(ctx: Ctx, scenery: Scenery) {
+export function drawStatic(ctx: Ctx, scenery: Scenery, bounds: Bounds) {
   ctx.fillStyle = COLORS.sky;
-  ctx.fillRect(0, 0, W, H);
+  fillBounds(ctx, bounds);
 
   ctx.fillStyle = COLORS.city;
   for (const b of scenery.city) ctx.fillRect(b.x, 92 - b.h, b.w, b.h);
 
   ctx.fillStyle = COLORS.ground;
-  ctx.fillRect(0, 92, W, H - 92);
+  fillBounds(ctx, { ...bounds, top: 92 });
 
   drawBleachers(ctx);
   drawScoreboardFrame(ctx);
@@ -125,6 +143,9 @@ function drawTowerStructures(ctx: Ctx) {
   }
 }
 
+/** Half-angle of the penalty arc: the spot is 30 units inside the box, the arc radius is 40. */
+const D_ARC = Math.acos(30 / 40);
+
 function drawPitch(ctx: Ctx) {
   for (let i = 0; i < 13; i++) {
     ctx.fillStyle = i % 2 ? COLORS.turfB : COLORS.turfA;
@@ -146,8 +167,15 @@ function drawPitch(ctx: Ctx) {
     ctx.strokeRect(s > 0 ? 60 : 800, 265, 40, 100);
     ctx.fillStyle = "#e8ede8";
     dot(ctx, gx + s * 80, 315, 2);
+    // The "D": only the part of the circle outside the box, meeting the 18-yard line exactly.
     ctx.beginPath();
-    ctx.arc(gx + s * 80, 315, 40, s > 0 ? -0.93 : 2.21, s > 0 ? 0.93 : 4.07);
+    ctx.arc(
+      gx + s * 80,
+      315,
+      40,
+      s > 0 ? -D_ARC : Math.PI - D_ARC,
+      s > 0 ? D_ARC : Math.PI + D_ARC,
+    );
     ctx.stroke();
   }
 
@@ -255,17 +283,40 @@ function drawGoal(ctx: Ctx, x: number, s: 1 | -1, ripple: number, t: number) {
   line(ctx, [x, 275], [x, 355]);
 }
 
+/**
+ * Planted in the corner itself and leaning outward about 30° off vertical, so it
+ * stands clear of the touchline, with an outlined pole and a waving flag.
+ */
+const FLAG_LEAN = Math.PI / 6;
+
 function drawCornerFlag(ctx: Ctx, t: number) {
-  ctx.strokeStyle = "#d8dcd8";
-  ctx.lineWidth = 2;
-  line(ctx, [840, 490], [840, 456]);
+  const pole = 46;
+
+  ctx.save();
+  ctx.translate(840, 490); // the corner of the pitch
+  ctx.rotate(FLAG_LEAN);
+
+  ctx.lineCap = "round";
+  ctx.strokeStyle = "rgba(0,0,0,.55)";
+  ctx.lineWidth = 4.5;
+  line(ctx, [0, 0], [0, -pole]);
+  ctx.strokeStyle = "#f3ead0";
+  ctx.lineWidth = 2.6;
+  line(ctx, [0, 0], [0, -pole]);
+
+  // The flag hangs off the top of the pole and waves.
+  const wave = Math.sin(t * 3) * 2.5;
   ctx.fillStyle = COLORS.amber;
-  const wave = Math.sin(t * 3) * 2;
+  ctx.strokeStyle = "rgba(0,0,0,.35)";
+  ctx.lineWidth = 0.8;
   ctx.beginPath();
-  ctx.moveTo(840, 456);
-  ctx.quadraticCurveTo(848, 458 + wave, 856, 461);
-  ctx.lineTo(840, 467);
+  ctx.moveTo(1, -pole);
+  ctx.quadraticCurveTo(9, -pole + 2 + wave, 18, -pole + 6);
+  ctx.quadraticCurveTo(9, -pole + 10 + wave * 0.6, 1, -pole + 14);
+  ctx.closePath();
   ctx.fill();
+  ctx.stroke();
+  ctx.restore();
 }
 
 /**
@@ -300,6 +351,8 @@ export type LightingInput = {
   level: number;
   t: number;
   dt: number;
+  /** Visible area in design units; the darkness covers all of it. */
+  bounds: Bounds;
 };
 
 export function drawLighting(
@@ -307,31 +360,38 @@ export function drawLighting(
   scenery: Scenery,
   state: SceneState,
   scoreboardName: string,
-  { towers, level, t, dt }: LightingInput,
+  { towers, level, t, dt, bounds }: LightingInput,
 ) {
   // Darkness fades as towers come on.
   ctx.fillStyle = `rgba(2,3,6,${Math.max(0.1, 0.94 - 0.84 * level)})`;
-  ctx.fillRect(0, 0, W, H);
+  fillBounds(ctx, bounds);
 
   // Warm cone from each lit tower toward the pitch.
   ctx.globalCompositeOperation = "lighter";
   TOWERS.forEach(([x, y], i) => {
     if (!towers[i]) return;
-    const g = ctx.createRadialGradient(x, y, 4, (x + 450) / 2, (y + 315) / 2, 420);
+    const cx = (x + 450) / 2;
+    const cy = (y + 315) / 2;
+    const g = ctx.createRadialGradient(x, y, 4, cx, cy, 420);
     g.addColorStop(0, `rgba(255,244,215,${0.16 * towers[i]})`);
     g.addColorStop(1, "rgba(255,244,215,0)");
     ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
+    // The gradient is fully transparent beyond its radius, so only fill that square.
+    ctx.fillRect(cx - 420, cy - 420, 840, 840);
   });
   ctx.globalCompositeOperation = "source-over";
 
   // Stars dim as the field lights up; skyline windows stay warm.
   for (const [x, y, a] of scenery.stars) {
+    if (x < bounds.left || x > bounds.right || y < bounds.top) continue;
     ctx.fillStyle = `rgba(220,230,255,${0.25 + 0.35 * a * (1 - level * 0.6)})`;
     ctx.fillRect(x, y, 1.2, 1.2);
   }
   ctx.fillStyle = "rgba(245,196,107,.35)";
-  for (const b of scenery.city) for (const [wx, wy] of b.windows) ctx.fillRect(wx, wy, 2, 2);
+  for (const b of scenery.city) {
+    if (b.x + b.w < bounds.left || b.x > bounds.right) continue;
+    for (const [wx, wy] of b.windows) ctx.fillRect(wx, wy, 2, 2);
+  }
 
   // Bulbs.
   TOWERS.forEach(([x, y], i) => {

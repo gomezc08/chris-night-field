@@ -24,7 +24,7 @@ export function AboutPanel({ profile }: { profile: SiteContent["profile"] }) {
     <div className={s.body}>
       <div className={s.profile}>
         {profile.photo && (
-          <SanityImage image={profile.photo} width={56} aspect={1} className={s.avatar} />
+          <SanityImage image={profile.photo} width={84} aspect={1} className={s.avatar} />
         )}
         <div>
           <p className={s.name}>{profile.name}</p>
@@ -88,7 +88,7 @@ export function ExperiencePanel({ experience }: { experience: SiteContent["exper
       {experience.map((e) => (
         <li key={e._id} className={s.card}>
           <div className={s.entryHead}>
-            {e.logo && <SanityImage image={e.logo} width={32} aspect={1} className={s.logo} />}
+            {e.logo && <SanityImage image={e.logo} width={44} aspect={1} className={s.logo} />}
             <div>
               <h3 className={s.h3}>
                 {e.role} <span className={s.muted}>· {e.company}</span>
@@ -113,7 +113,7 @@ export function EducationPanel({ education }: { education: SiteContent["educatio
       {education.map((e) => (
         <li key={e._id} className={s.card}>
           <div className={s.entryHead}>
-            {e.logo && <SanityImage image={e.logo} width={32} aspect={1} className={s.logo} />}
+            {e.logo && <SanityImage image={e.logo} width={44} aspect={1} className={s.logo} />}
             <div>
               <h3 className={s.h3}>{e.school}</h3>
               <p className={s.small}>{[e.degree, e.field].filter(Boolean).join(", ")}</p>

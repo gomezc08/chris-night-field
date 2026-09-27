@@ -6,7 +6,7 @@ A personal portfolio as a 2D night soccer field.
 
 ## Overview
 
-The site is a night soccer field under floodlights. It loads pitch black, the floodlight towers click on one at a time, and a lone player juggles at the center circle. Eight objects around the field are the navigation. Clicking one sends the player over to do something, then opens a frosted panel with that section:
+The site opens on a black loading screen (a spinning ball counting to 100%) and a START button. Then it becomes a full-window night soccer field under floodlights. It starts pitch black, the floodlight towers click on one at a time, and a lone player juggles at the center circle. Eight objects around the field are the navigation. Clicking one sends the player over to do something, then opens a frosted panel with that section:
 
 | Spot | Section |
 |---|---|
@@ -121,10 +121,12 @@ src/
   scene/                      Canvas engine: 900×560 design space, drawing, intro, hit-testing.
                               Knows nothing about Sanity or React.
     director.ts               Player routines (step queue, open/close per spot, idle water break)
+    layout.ts                 Fits the 900×560 design into a window of any shape
     player/                   PlayerRenderer interface + the procedural stick figure
     sound.ts                  Howler soundboard, driven by the scene's sound cues
   components/
     field/                    React host for the scene: canvas, tooltip, controls, panel shell
+    start/                    Loading and START screen shown before the field
     panels/                   The eight panel layouts (content from Sanity)
     press/                    Press box sections and styles
     SanityImage.tsx           next/image backed by Sanity's CDN
