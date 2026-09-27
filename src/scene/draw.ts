@@ -125,6 +125,9 @@ function drawTowerStructures(ctx: Ctx) {
   }
 }
 
+/** Half-angle of the penalty arc: the spot is 30 units inside the box, the arc radius is 40. */
+const D_ARC = Math.acos(30 / 40);
+
 function drawPitch(ctx: Ctx) {
   for (let i = 0; i < 13; i++) {
     ctx.fillStyle = i % 2 ? COLORS.turfB : COLORS.turfA;
@@ -146,8 +149,9 @@ function drawPitch(ctx: Ctx) {
     ctx.strokeRect(s > 0 ? 60 : 800, 265, 40, 100);
     ctx.fillStyle = "#e8ede8";
     dot(ctx, gx + s * 80, 315, 2);
+    // The "D": only the part of the circle outside the box, meeting the 18-yard line exactly.
     ctx.beginPath();
-    ctx.arc(gx + s * 80, 315, 40, s > 0 ? -0.93 : 2.21, s > 0 ? 0.93 : 4.07);
+    ctx.arc(gx + s * 80, 315, 40, s > 0 ? -D_ARC : Math.PI - D_ARC, s > 0 ? D_ARC : Math.PI + D_ARC);
     ctx.stroke();
   }
 
