@@ -1,0 +1,109 @@
+.screen {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  background: #000;
+  color: #f2f2f2;
+  transition: opacity 0.7s ease;
+}
+
+/* The field's own intro starts pitch black, so fading this out is seamless. */
+.leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+/* The ball bobs while it spins, over a shadow that breathes with it. */
+.ball {
+  width: 96px;
+  height: 96px;
+  animation:
+    spin 1.4s linear infinite,
+    bob 0.7s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.18));
+}
+
+.loader::after {
+  content: "";
+  order: 1;
+  width: 70px;
+  height: 10px;
+  margin-top: -20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  animation: shadow 0.7s ease-in-out infinite alternate;
+}
+
+.caption {
+  order: 2;
+  margin: 0;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.start {
+  padding: 8px 28px;
+  background: none;
+  border: 0;
+  color: #f2f2f2;
+  font: inherit;
+  font-size: clamp(56px, 8vw, 84px);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  animation: appear 0.6s ease both;
+  transition:
+    color 0.2s,
+    text-shadow 0.2s;
+}
+
+.start:hover,
+.start:focus-visible {
+  color: #fff;
+  text-shadow: 0 0 24px rgba(255, 244, 215, 0.55);
+  outline: none;
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes bob {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 -18px;
+  }
+}
+
+@keyframes shadow {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.7);
+    opacity: 0.55;
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}

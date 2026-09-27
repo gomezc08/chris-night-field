@@ -8,7 +8,8 @@
   position: fixed;
   top: 18px;
   right: 18px;
-  z-index: 5;
+  /* Above the start screen too, so recruiters can skip straight to the press box. */
+  z-index: 30;
   padding: 8px 14px;
   background: rgba(8, 12, 18, 0.72);
   backdrop-filter: blur(6px);

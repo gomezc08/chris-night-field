@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { siteMetadata } from "@/lib/metadata";
 import { NightField } from "@/components/field/NightField";
+import { StartScreen } from "@/components/start/StartScreen";
 import { PlacesPanel } from "@/components/panels/PlacesPanel";
 import { ProjectsPanel } from "@/components/panels/ProjectsPanel";
 import {
@@ -45,11 +46,13 @@ export default async function Home() {
   return (
     <main className={styles.main}>
       <h1 className={styles.srOnly}>{data.profile?.name ?? "Portfolio"}</h1>
-      <NightField
-        scoreboardName={data.siteSettings?.scoreboardName ?? "GOMEZ FC"}
-        ambientTrackUrl={data.siteSettings?.ambientTrack?.url}
-        panels={panels}
-      />
+      <StartScreen>
+        <NightField
+          scoreboardName={data.siteSettings?.scoreboardName ?? "GOMEZ FC"}
+          ambientTrackUrl={data.siteSettings?.ambientTrack?.url}
+          panels={panels}
+        />
+      </StartScreen>
       <Link href="/press" className={styles.pressLink}>
         Press box: everything on one page →
       </Link>
