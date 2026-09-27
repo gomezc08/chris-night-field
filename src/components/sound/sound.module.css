@@ -1,0 +1,53 @@
+/* Bottom-left on every page except Studio, above the start screen. */
+.music {
+  position: fixed;
+  left: 20px;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  background: rgba(8, 12, 18, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #e8edf2;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    transform 0.15s;
+}
+
+.music:hover {
+  background: rgba(20, 28, 40, 0.85);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.music[aria-pressed="true"] {
+  color: #ffb547;
+  border-color: rgba(255, 181, 71, 0.6);
+}
+
+.music:focus-visible {
+  outline: 2px solid #ffb547;
+  outline-offset: 2px;
+}
+
+@media (max-width: 700px) {
+  .music {
+    left: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+}
+
+/* Keep it off printed copies of the press box. */
+@media print {
+  .music {
+    display: none;
+  }
+}
