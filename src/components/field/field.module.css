@@ -209,11 +209,3 @@
   border-color: #ffb547;
   color: #ffb547;
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .panel,
-  .tip {
-    transition: none;
-    transform: none;
-  }
-}

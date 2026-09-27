@@ -32,23 +32,8 @@ const TAB_ORDER: SpotKey[] = [
 ];
 
 const MOBILE = "(max-width: 700px)";
-const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 
 const pct = (n: number, of: number) => `${(n / of) * 100}%`;
-
-// Many people have reduced motion on at the OS level without knowing it, so the
-// scene offers a way back to the animated version and remembers the choice.
-const MOTION_PREF_KEY = "night-field:animations";
-
-function initialAnimate() {
-  if (typeof window === "undefined") return null;
-  if (!window.matchMedia(REDUCED_MOTION).matches) return true;
-  try {
-    return localStorage.getItem(MOTION_PREF_KEY) === "on";
-  } catch {
-    return false;
-  }
-}
 
 export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
   const stageRef = useRef<HTMLDivElement>(null);
@@ -66,9 +51,6 @@ export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
   const [showAllPref, setShowAll] = useState(false);
   const [tip, setTip] = useState<Tip | null>(null);
   const [muted, setMuted] = useState(true);
-  /** null until the client knows the motion preference. */
-  const [animate, setAnimate] = useState<boolean | null>(initialAnimate);
-  const prefersReducedMotion = useMediaQuery(REDUCED_MOTION);
 
   const isMobile = useMediaQuery(MOBILE);
   // On phones the spots are too small to discover by hovering, so labels are always on.
@@ -85,13 +67,10 @@ export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // The engine is rebuilt only when the visitor switches animations on or off.
   useEffect(() => {
-    if (animate === null) return;
     const engine = createNightField(canvasRef.current!, {
       scoreboardName,
       skipIntro: window.matchMedia(MOBILE).matches,
-      reducedMotion: !animate,
       // The player walks over first; the panel opens when his routine ends.
       onOpen: (key) => {
         setActive(key);
@@ -104,28 +83,15 @@ export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
     return () => {
       engine.destroy();
       engineRef.current = null;
-      setActive(null);
-      setShown(null);
     };
-    // Later prop changes are synced below, without rebuilding the scene.
+    // The engine is created once; later prop changes are synced below.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [animate]);
+  }, []);
 
-  // These re-run after a rebuild (animate changes) so the new engine gets current values.
-  useEffect(() => engineRef.current?.setScoreboardName(scoreboardName), [scoreboardName, animate]);
+  useEffect(() => engineRef.current?.setScoreboardName(scoreboardName), [scoreboardName]);
   useEffect(() => soundRef.current?.setMuted(muted), [muted]);
   // Canvas labels would be ~4px tall on a phone, so there the chips below the field name the spots.
-  useEffect(() => engineRef.current?.setShowAll(showAll, !isMobile), [showAll, isMobile, animate]);
-
-  function toggleAnimations() {
-    const next = !animate;
-    try {
-      localStorage.setItem(MOTION_PREF_KEY, next ? "on" : "off");
-    } catch {
-      // Private mode or blocked storage: the choice just won't be remembered.
-    }
-    setAnimate(next);
-  }
+  useEffect(() => engineRef.current?.setShowAll(showAll, !isMobile), [showAll, isMobile]);
 
   // Focus moves into the panel when it opens and back to its spot when it closes.
   useEffect(() => {
@@ -276,11 +242,6 @@ export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
           <button type="button" onClick={() => setMuted((m) => !m)} aria-pressed={!muted}>
             {muted ? "Sound off" : "Sound on"}
           </button>
-          {prefersReducedMotion && animate !== null && (
-            <button type="button" onClick={toggleAnimations} aria-pressed={animate}>
-              {animate ? "Reduce motion" : "Play animations"}
-            </button>
-          )}
         </div>
       </div>
 

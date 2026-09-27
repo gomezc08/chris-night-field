@@ -26,7 +26,6 @@ Between visits to the spots, the player juggles and wanders over to the water bo
 It also works for everyone:
 
 - **Keyboard and screen readers:** every spot is a labelled button ("Projects: home goal"), and panels take and return focus.
-- **Reduced motion:** with `prefers-reduced-motion`, the field is already lit and still, and spots open panels without routines. A "Play animations" button switches the scene back on for people who have reduced motion enabled without realizing it.
 - **Phones:** under 700px the lit field is a hero with every spot outlined, section chips below it, bottom-sheet panels, and a prominent link to `/press`.
 
 ## Stack
