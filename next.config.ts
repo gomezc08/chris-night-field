@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    loader: "custom",
+    loaderFile: "./src/sanity/lib/imageLoader.ts",
+  },
 };
 
 export default nextConfig;
