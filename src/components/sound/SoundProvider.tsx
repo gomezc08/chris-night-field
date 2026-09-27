@@ -60,8 +60,8 @@ function writePref(on: boolean) {
   window.dispatchEvent(new Event(PREF_EVENT));
 }
 
-/** Pages where music would get in the way: the press box (recruiters reading) and Studio. */
-const isQuietPage = (path: string) => path.startsWith("/press") || path.startsWith("/studio");
+/** Studio is the editing dashboard, so no music (or button) there. */
+const isQuietPage = (path: string) => path.startsWith("/studio");
 
 /**
  * Owns the one soundboard for the whole site. It lives in the root layout, so the

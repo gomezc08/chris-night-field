@@ -30,7 +30,7 @@ On the field, it starts pitch black, the floodlight towers click on one at a tim
 
 [`/press`](http://localhost:3000/press) is the "press box": every section on one fast, plain page for recruiters, SEO, and mobile.
 
-Between visits to the spots, the player juggles and wanders over to the water bottles for a drink. Goals ripple the net and tick up the scoreboard. A soft late-night lo-fi loop (or your own track from Site settings) plays across the start screen, About, and the field, starting on the visitor's first click, with quiet ball touches, floodlight knocks, and the net swish on the field. The music button (bottom-left) turns it off, and that choice is remembered. It stays quiet on `/press`. First-time visitors get a handwritten hint pointing at the "show all spots" eye button.
+Between visits to the spots, the player juggles and wanders over to the water bottles for a drink. Goals ripple the net and tick up the scoreboard. A soft late-night lo-fi loop (or your own track from Site settings) plays across the start screen, About, the field, and the press box, starting on the visitor's first click, with quiet ball touches, floodlight knocks, and the net swish on the field. The music button (bottom-left on every page) turns it off, and that choice is remembered. First-time visitors get a handwritten hint pointing at the "show all spots" eye button.
 
 It also works for everyone:
 
@@ -164,5 +164,5 @@ reference/                    Prototype and screenshots (source of truth for the
 - **Sanity datasets on the Free plan are public.** Anything in Sanity can be read by anyone with the project ID. Never store private data there: no phone number, home address, or anything sensitive.
 - **Sanity Free** limits: 20 users, 2 datasets, 10,000 documents, 2 GROQ-powered webhooks, plus monthly API request, bandwidth, and asset storage caps. At the limit it stops serving rather than billing. Compress photos before uploading.
 - **Vercel Hobby** is free for personal, non-commercial use, with monthly bandwidth and function limits. Images are resized by Sanity's CDN, not Vercel's image optimizer, so they don't count against Vercel's image quota.
-- The music loop (about 700 KB) loads for every visitor since music is on by default; it isn't loaded on `/press` or `/studio`.
+- The music loop (about 700 KB) loads for every visitor since music is on by default (not in `/studio`).
 - Pages are static and cached, so visitor traffic barely touches Sanity's API. Sanity is only queried at build time and when a publish (or the 60-second fallback) revalidates a page.

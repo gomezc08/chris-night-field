@@ -1,4 +1,4 @@
-/* Bottom-left on every page (except the press box and Studio), above the start screen. */
+/* Bottom-left on every page except Studio, above the start screen. */
 .music {
   position: fixed;
   left: 20px;
@@ -42,5 +42,12 @@
   .music {
     left: 16px;
     bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+}
+
+/* Keep it off printed copies of the press box. */
+@media print {
+  .music {
+    display: none;
   }
 }
