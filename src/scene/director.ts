@@ -53,11 +53,17 @@ export type Director = {
   update: (dt: number, lightTime: number) => void;
 };
 
+export type DirectorOptions = {
+  /** Reduced motion: spots open panels immediately, with no routines or idle behaviour. */
+  instant?: boolean;
+};
+
 export function createDirector(
   state: SceneState,
   player: PlayerState,
   ball: Ball,
   events: DirectorEvents,
+  { instant = false }: DirectorOptions = {},
 ): Director {
   let phase: Phase = "idle";
   let queue: Step[] = [];
@@ -287,6 +293,14 @@ export function createDirector(
   // --- Public API ---
 
   function select(key: SpotKey) {
+    if (instant) {
+      if (key === state.active) return false;
+      if (state.active) events.onHide();
+      phase = "open";
+      state.active = key;
+      events.onOpen(key);
+      return true;
+    }
     if (phase === "busy" && !onBreak) return false;
     let steps: Step[] = [];
     if (phase === "open") {
@@ -307,6 +321,10 @@ export function createDirector(
     const key = state.active!;
     state.active = null;
     events.onHide();
+    if (instant) {
+      phase = "idle";
+      return true;
+    }
     phase = "busy";
     run([...CLOSE[key](), ...backToCenter()]);
     return true;
@@ -315,7 +333,7 @@ export function createDirector(
   function update(dt: number, lightTime: number) {
     step(dt);
 
-    if (phase === "idle" && lightTime > IDLE_AFTER_INTRO) {
+    if (!instant && phase === "idle" && lightTime > IDLE_AFTER_INTRO) {
       idleTime += dt;
       if (idleTime > nextBreak) {
         nextBreak = IDLE_BREAK_MIN + Math.random() * IDLE_BREAK_SPAN;

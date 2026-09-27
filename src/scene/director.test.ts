@@ -138,3 +138,30 @@ describe("director", () => {
     expectOpen(w, "goalR");
   });
 });
+
+describe("director (reduced motion)", () => {
+  it("opens, switches, and closes panels immediately without moving the player", () => {
+    const state = createSceneState();
+    const player: PlayerState = { x: CENTER[0], y: CENTER[1], facing: 1, pose: "stand" };
+    const ball = createBall();
+    ball.mode = "foot";
+    const events: string[] = [];
+    const d = createDirector(
+      state,
+      player,
+      ball,
+      { onOpen: (k) => events.push(`open ${k}`), onHide: () => events.push("hide") },
+      { instant: true },
+    );
+
+    expect(d.select("goalR")).toBe(true);
+    expect(d.select("stands")).toBe(true);
+    expect(d.close()).toBe(true);
+    for (let i = 0; i < 60 * 60; i++) d.update(DT, 100); // a minute idle: no water break
+
+    expect(events).toEqual(["open goalR", "hide", "open stands", "hide"]);
+    expect(d.phase).toBe("idle");
+    expect([player.x, player.y, player.pose]).toEqual([CENTER[0], CENTER[1], "stand"]);
+    expect(state).toMatchObject({ bagOnBench: true, boardHeld: false, ballInBag: false, homeScore: 0 });
+  });
+});

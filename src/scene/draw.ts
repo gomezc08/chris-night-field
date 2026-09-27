@@ -268,6 +268,29 @@ function drawCornerFlag(ctx: Ctx, t: number) {
   ctx.fill();
 }
 
+/**
+ * One soft shadow per lit tower, stretching away from it along the ground.
+ * Farther from a tower means a longer shadow. (x, y) is the object's ground contact point.
+ */
+export function drawLongShadows(ctx: Ctx, x: number, y: number, height: number, towers: number[]) {
+  TOWERS.forEach(([tx, ty], i) => {
+    const intensity = Math.min(1, towers[i]);
+    if (intensity < 0.05) return;
+    const dx = x - tx;
+    const dy = y - ty;
+    const dist = Math.hypot(dx, dy);
+    const length = height * (0.6 + dist / 320);
+    ctx.save();
+    ctx.translate(x, y + 1);
+    ctx.rotate(Math.atan2(dy, dx));
+    ctx.fillStyle = `rgba(0,0,0,${0.13 * intensity})`;
+    ctx.beginPath();
+    ctx.ellipse(length / 2, 0, length / 2, Math.max(1.2, height * 0.09), 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+}
+
 // --- Lighting and overlays (every frame, after the world) -----------------------
 
 export type LightingInput = {
@@ -366,7 +389,7 @@ export function drawSpotOutlines(ctx: Ctx, state: SceneState) {
     ctx.strokeRect(a - 3, b - 3, w + 6, h + 6);
     ctx.setLineDash([]);
 
-    if (state.showAll) {
+    if (state.showAll && state.showLabels) {
       ctx.font = "11px system-ui, sans-serif";
       ctx.textAlign = "center";
       const lw = ctx.measureText(section).width + 10;
