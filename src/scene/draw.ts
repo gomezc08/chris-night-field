@@ -284,8 +284,8 @@ function drawGoal(ctx: Ctx, x: number, s: 1 | -1, ripple: number, t: number) {
 }
 
 /**
- * Planted just outside the corner (not on the touchline, where it disappeared) and
- * leaning outward about 30° off vertical, with an outlined pole and a waving flag.
+ * Planted in the corner itself and leaning outward about 30° off vertical, so it
+ * stands clear of the touchline, with an outlined pole and a waving flag.
  */
 const FLAG_LEAN = Math.PI / 6;
 
@@ -293,7 +293,7 @@ function drawCornerFlag(ctx: Ctx, t: number) {
   const pole = 46;
 
   ctx.save();
-  ctx.translate(845, 493);
+  ctx.translate(840, 490); // the corner of the pitch
   ctx.rotate(FLAG_LEAN);
 
   ctx.lineCap = "round";
