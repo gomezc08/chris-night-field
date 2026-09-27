@@ -133,7 +133,7 @@ export function Experience({ experience }: { experience: Press["experience"] }) 
           <li key={e._id} className={styles.entry}>
             <div className={styles.entryHead}>
               {e.logo && (
-                <SanityImage image={e.logo} width={40} aspect={1} className={styles.logo} />
+                <SanityImage image={e.logo} width={80} className={styles.logo} />
               )}
               <div>
                 <h3 className={styles.entryTitle}>
@@ -162,7 +162,7 @@ export function Education({ education }: { education: Press["education"] }) {
           <li key={e._id} className={styles.entry}>
             <div className={styles.entryHead}>
               {e.logo && (
-                <SanityImage image={e.logo} width={40} aspect={1} className={styles.logo} />
+                <SanityImage image={e.logo} width={80} className={styles.logo} />
               )}
               <div>
                 <h3 className={styles.entryTitle}>{e.school}</h3>

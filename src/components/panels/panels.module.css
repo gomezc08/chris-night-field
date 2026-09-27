@@ -99,11 +99,15 @@
   margin-bottom: 4px;
 }
 
+/* Logos show whole at their own shape on a light tile, so wide wordmarks and dark
+   logos both read. No cropping needed in Studio. */
 .logo {
   width: 44px;
   height: 44px;
+  padding: 5px;
   border-radius: 8px;
-  object-fit: cover;
+  background: #f4f6f8;
+  object-fit: contain;
   flex: none;
   margin-top: 2px;
 }
