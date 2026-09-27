@@ -29,7 +29,7 @@ export const SPOTS: Record<SpotKey, Spot> = {
   goalL: { section: "Links", object: "Away goal", rect: [24, 262, 40, 106] },
   score: { section: "Experience", object: "Scoreboard", rect: [608, 26, 164, 80] },
   board: { section: "Education", object: "Tactics board", rect: [280, 486, 36, 42] },
-  flag: { section: "Places I've lived", object: "Corner flag", rect: [826, 446, 32, 50] },
+  flag: { section: "Places I've lived", object: "Corner flag", rect: [828, 446, 50, 50] },
   ballbag: { section: "Skills and stack", object: "Ball bag", rect: [598, 494, 36, 34] },
   stands: { section: "Credits", object: "Bleachers", rect: [180, 62, 380, 72] },
 };

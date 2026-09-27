@@ -284,34 +284,39 @@ function drawGoal(ctx: Ctx, x: number, s: 1 | -1, ripple: number, t: number) {
 }
 
 /**
- * Planted just outside the corner (not on the touchline, where it disappeared),
- * with a taller warm-white pole, a dark outline, and a bigger waving flag.
+ * Planted just outside the corner (not on the touchline, where it disappeared) and
+ * leaning outward about 30° off vertical, with an outlined pole and a waving flag.
  */
+const FLAG_LEAN = Math.PI / 6;
+
 function drawCornerFlag(ctx: Ctx, t: number) {
-  const x = 845;
-  const base = 493;
-  const top = 448;
+  const pole = 46;
+
+  ctx.save();
+  ctx.translate(845, 493);
+  ctx.rotate(FLAG_LEAN);
 
   ctx.lineCap = "round";
   ctx.strokeStyle = "rgba(0,0,0,.55)";
   ctx.lineWidth = 4.5;
-  line(ctx, [x, base], [x, top]);
+  line(ctx, [0, 0], [0, -pole]);
   ctx.strokeStyle = "#f3ead0";
   ctx.lineWidth = 2.6;
-  line(ctx, [x, base], [x, top]);
-  ctx.lineCap = "butt";
+  line(ctx, [0, 0], [0, -pole]);
 
+  // The flag hangs off the top of the pole and waves.
   const wave = Math.sin(t * 3) * 2.5;
   ctx.fillStyle = COLORS.amber;
   ctx.strokeStyle = "rgba(0,0,0,.35)";
   ctx.lineWidth = 0.8;
   ctx.beginPath();
-  ctx.moveTo(x + 1, top);
-  ctx.quadraticCurveTo(x + 9, top + 2 + wave, x + 18, top + 6);
-  ctx.quadraticCurveTo(x + 9, top + 10 + wave * 0.6, x + 1, top + 14);
+  ctx.moveTo(1, -pole);
+  ctx.quadraticCurveTo(9, -pole + 2 + wave, 18, -pole + 6);
+  ctx.quadraticCurveTo(9, -pole + 10 + wave * 0.6, 1, -pole + 14);
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
+  ctx.restore();
 }
 
 /**
