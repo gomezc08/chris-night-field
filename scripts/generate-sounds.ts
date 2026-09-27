@@ -69,23 +69,13 @@ function loopable(input: Float32Array, fadeSeconds: number) {
 const TAU = Math.PI * 2;
 const sounds: Record<string, Float32Array> = {};
 
-// Floodlight relay: a sharp click on top of a low thump.
+// Floodlight switching on: a muffled, distant knock. No click, no hum.
 sounds.thunk = normalize(
-  render(0.6, (t) => {
-    const click = t < 0.012 ? noise() * (1 - t / 0.012) : 0;
-    const thump = Math.sin(TAU * (55 + 40 * Math.exp(-t * 30)) * t) * Math.exp(-t * 9);
-    return click * 0.6 + thump;
-  }),
-  0.9,
-);
-
-// Mains hum from the lamps. 2 s holds whole cycles of 120/240/360 Hz, so it loops cleanly.
-sounds.hum = normalize(
-  render(
-    2,
-    (t) => Math.sin(TAU * 120 * t) + 0.5 * Math.sin(TAU * 240 * t) + 0.2 * Math.sin(TAU * 360 * t),
+  lowpass(
+    render(0.5, (t) => Math.sin(TAU * (48 + 30 * Math.exp(-t * 25)) * t) * Math.exp(-t * 11)),
+    400,
   ),
-  0.5,
+  0.7,
 );
 
 // Soft ball-on-turf touch.
@@ -117,25 +107,107 @@ sounds.swish = normalize(
   0.8,
 );
 
-// Empty stadium at night: distant low rumble plus a few crickets.
-sounds.ambience = normalize(
+// --- Late-night loop ------------------------------------------------------------
+// Soft electric-piano chords over a warm pad, a few high notes, vinyl crackle, and
+// faint crickets. Four chords, four seconds each, so it loops every 16 seconds.
+
+const midi = (n: number) => 440 * 2 ** ((n - 69) / 12);
+const CHORD_SECONDS = 4;
+const CHORDS = [
+  [53, 57, 60, 64], // Fmaj7
+  [52, 55, 59, 62], // Em7
+  [50, 53, 57, 60], // Dm7
+  [48, 52, 55, 59], // Cmaj7
+];
+// Sparse melody on top: [chord index, beat offset in seconds, midi note].
+const MELODY: [number, number, number][] = [
+  [0, 1.0, 76],
+  [0, 2.5, 72],
+  [1, 1.5, 74],
+  [2, 0.5, 77],
+  [2, 2.0, 76],
+  [3, 1.0, 72],
+  [3, 3.0, 67],
+];
+
+/** A mellow electric-piano note: fundamental plus a soft octave, gentle tremolo, long decay. */
+function keys(out: Float32Array, start: number, freq: number, gain: number, decay = 1.6) {
+  const from = Math.round(start * RATE);
+  const len = Math.round(4.5 * RATE);
+  for (let i = 0; i < len && from + i < out.length; i++) {
+    const t = i / RATE;
+    const env = Math.min(1, t / 0.008) * Math.exp(-t * decay);
+    const tremolo = 1 + 0.08 * Math.sin(TAU * 4.5 * t);
+    const tone = Math.sin(TAU * freq * t) + 0.22 * Math.sin(TAU * freq * 2 * t) * Math.exp(-t * 4);
+    out[from + i] += tone * env * tremolo * gain;
+  }
+}
+
+/** A slow, slightly detuned pad that swells in and out over one chord. */
+function pad(out: Float32Array, start: number, freq: number, gain: number) {
+  const from = Math.round(start * RATE);
+  const len = Math.round((CHORD_SECONDS + 1.5) * RATE);
+  for (let i = 0; i < len && from + i < out.length; i++) {
+    const t = i / RATE;
+    const env = Math.min(1, t / 1.2) * Math.min(1, Math.max(0, (CHORD_SECONDS + 1.5 - t) / 1.5));
+    const tone = Math.sin(TAU * freq * t) + Math.sin(TAU * freq * 1.004 * t + 1);
+    out[from + i] += tone * env * gain;
+  }
+}
+
+/** Feedback echo, low-passed so repeats get darker. Gives the dry synth some room. */
+function echo(input: Float32Array, seconds: number, feedback: number, mix: number) {
+  const d = Math.round(seconds * RATE);
+  const buf = new Float32Array(input.length);
+  let lp = 0;
+  for (let i = 0; i < input.length; i++) {
+    const delayed = i >= d ? buf[i - d] : 0;
+    lp += 0.35 * (delayed - lp);
+    buf[i] = input[i] + lp * feedback;
+  }
+  return input.map((x, i) => x + (buf[i] - x) * mix);
+}
+
+const LOOP = CHORDS.length * CHORD_SECONDS;
+const TAIL = 2; // rendered past the loop point, then crossfaded into the start
+
+sounds.night = normalize(
   loopable(
     (() => {
-      let brown = 0;
-      const rumble = lowpass(
-        render(9, () => (brown = Math.max(-1, Math.min(1, brown + noise() * 0.02)))),
-        300,
-      );
-      const crickets = render(9, (t) => {
-        const chirp = (t * 0.9) % 1.7 < 0.18 ? 1 : 0; // short chirp bursts
-        const trill = Math.sin(TAU * 28 * t) > 0 ? 1 : 0;
-        return Math.sin(TAU * 4200 * t) * chirp * trill * 0.12;
+      const music = new Float32Array(Math.round((LOOP + TAIL) * RATE));
+      CHORDS.forEach((chord, c) => {
+        const at = c * CHORD_SECONDS;
+        // Slightly rolled chord, struck again softly halfway through.
+        chord.forEach((n, k) => {
+          keys(music, at + k * 0.045, midi(n), 0.16);
+          keys(music, at + 2 + k * 0.03, midi(n), 0.07);
+          pad(music, at, midi(n - 12), 0.035);
+        });
+        keys(music, at, midi(chord[0] - 12), 0.18, 1.1); // bass note
       });
-      return rumble.map((x, i) => x + crickets[i]);
+      for (const [c, beat, n] of MELODY) keys(music, c * CHORD_SECONDS + beat, midi(n), 0.09, 2.2);
+
+      const warm = lowpass(echo(music, 0.42, 0.45, 0.35), 2200);
+
+      // Vinyl: very quiet hiss plus sparse soft pops.
+      const vinyl = lowpass(
+        render(LOOP + TAIL, () => noise() * 0.012 + (noise() > 0.9993 ? noise() * 0.25 : 0)),
+        3000,
+      );
+
+      // Crickets: soft sine chirps far in the distance.
+      const crickets = render(LOOP + TAIL, (t) => {
+        const phase = (t * 0.7) % 2.3;
+        if (phase > 0.24) return 0;
+        const env = Math.sin((Math.PI * phase) / 0.24) * (0.5 + 0.5 * Math.sin(TAU * 22 * t));
+        return Math.sin(TAU * 4400 * t) * env * 0.012;
+      });
+
+      return warm.map((x, i) => x + vinyl[i] + crickets[i]);
     })(),
-    1,
+    TAIL,
   ),
-  0.6,
+  0.7,
 );
 
 mkdirSync(OUT, { recursive: true });

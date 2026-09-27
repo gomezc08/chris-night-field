@@ -1,10 +1,9 @@
 import { Howl, Howler } from "howler";
 
-import { TOWERS } from "./constants";
 import type { SceneSound } from "./engine";
 
 export type Soundboard = {
-  /** Plays a cue from the scene. Silently tracks state while muted. */
+  /** Plays a cue from the scene. Ignored while muted. */
   play: (sound: SceneSound) => void;
   setMuted: (muted: boolean) => void;
   destroy: () => void;
@@ -12,43 +11,38 @@ export type Soundboard = {
 
 const src = (name: string) => [`/sounds/${name}.wav`];
 
+const MUSIC_VOLUME = 0.45;
+const TOUCH_VOLUME = 0.16;
+
 /**
- * All scene audio. Starts muted and downloads nothing until the first unmute.
- * `ambientTrackUrl` is Chris's own track from Site settings, if he uploaded one.
+ * All scene audio: a late-night music loop with quiet effects on top. Starts muted
+ * and downloads nothing until the first unmute. `ambientTrackUrl` is Chris's own
+ * track from Site settings; when present it replaces the built-in loop.
  */
 export function createSoundboard(ambientTrackUrl?: string | null): Soundboard {
   let muted = true;
-  let litTowers = 0;
   let howls: ReturnType<typeof load> | null = null;
 
   function load() {
     return {
-      thunk: new Howl({ src: src("thunk"), volume: 0.5 }),
-      touch: new Howl({ src: src("touch"), volume: 0.35 }),
-      swish: new Howl({ src: src("swish"), volume: 0.45 }),
-      hum: new Howl({ src: src("hum"), loop: true, volume: 0 }),
-      ambience: new Howl({ src: src("ambience"), loop: true, volume: 0.25 }),
-      // html5 streams a long file instead of decoding it all up front.
-      track: ambientTrackUrl
-        ? new Howl({ src: [ambientTrackUrl], loop: true, volume: 0.35, html5: true })
-        : null,
+      thunk: new Howl({ src: src("thunk"), volume: 0.22 }),
+      touch: new Howl({ src: src("touch"), volume: TOUCH_VOLUME }),
+      swish: new Howl({ src: src("swish"), volume: 0.3 }),
+      // html5 streams a long uploaded file instead of decoding it all up front.
+      music: ambientTrackUrl
+        ? new Howl({ src: [ambientTrackUrl], loop: true, volume: 0, html5: true })
+        : new Howl({ src: src("night"), loop: true, volume: 0 }),
     };
   }
 
-  // The hum grows with each tower that's on.
-  const humVolume = () => 0.05 * litTowers;
-
-  function startLoops() {
+  function startMusic() {
     if (!howls) return;
-    for (const loop of [howls.hum, howls.ambience, howls.track]) {
-      if (loop && !loop.playing()) loop.play();
-    }
-    howls.hum.volume(humVolume());
+    if (!howls.music.playing()) howls.music.play();
+    howls.music.fade(howls.music.volume(), MUSIC_VOLUME, 1500);
   }
 
-  function stopLoops() {
-    if (!howls) return;
-    for (const loop of [howls.hum, howls.ambience, howls.track]) loop?.pause();
+  function stopMusic() {
+    howls?.music.pause();
   }
 
   // Go quiet when the tab is in the background.
@@ -57,18 +51,16 @@ export function createSoundboard(ambientTrackUrl?: string | null): Soundboard {
 
   return {
     play(sound) {
-      if (sound.type === "tower") litTowers = Math.min(TOWERS.length, litTowers + 1);
       if (muted || !howls) return;
 
       switch (sound.type) {
         case "tower":
           howls.thunk.rate(0.9 + Math.random() * 0.2);
           howls.thunk.play();
-          howls.hum.fade(howls.hum.volume(), humVolume(), 400);
           break;
         case "touch": {
           const id = howls.touch.play();
-          howls.touch.volume(0.35 * sound.strength, id);
+          howls.touch.volume(TOUCH_VOLUME * sound.strength, id);
           howls.touch.rate(0.9 + Math.random() * 0.25, id);
           break;
         }
@@ -82,11 +74,11 @@ export function createSoundboard(ambientTrackUrl?: string | null): Soundboard {
       muted = next;
       Howler.mute(muted || document.hidden);
       if (muted) {
-        stopLoops();
+        stopMusic();
         return;
       }
       howls ??= load();
-      startLoops();
+      startMusic();
     },
 
     destroy() {
