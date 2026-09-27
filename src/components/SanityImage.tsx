@@ -18,6 +18,7 @@ type Props = {
   width: number;
   /** Crop to this aspect ratio (width / height). Defaults to the original. */
   aspect?: number;
+  /** Responsive sizes. Omit for fixed-size images to get a 1x/2x srcset. */
   sizes?: string;
   preload?: boolean;
   className?: string;
@@ -41,7 +42,7 @@ export function SanityImage({ image, width, aspect, sizes, preload, className }:
       alt={image.alt ?? ""}
       width={width}
       height={height}
-      sizes={sizes ?? `${width}px`}
+      sizes={sizes}
       preload={preload}
       placeholder={image.lqip ? "blur" : "empty"}
       blurDataURL={image.lqip ?? undefined}
