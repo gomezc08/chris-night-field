@@ -12,3 +12,19 @@ Gomez Field: a portfolio as a 2D night soccer field. Full spec in `SPEC.md`; `re
 - Git: one branch + PR per stage (`stage-N-name`). Never commit to `main`, never force-push. Push only after Chris approves.
 
 @AGENTS.md
+
+## Commands
+
+- `npm run dev` — dev server (`/press`, `/studio`). No caching in dev; use `npm run build && npm start` to test revalidation.
+- `npm run typegen` — after any schema or GROQ change. Commit the regenerated `src/sanity/types.ts`.
+- `npm run seed` — placeholder content (needs `npx sanity login`).
+- `npm run lint`, `npx tsc --noEmit` — before committing.
+
+## Conventions
+
+- GROQ lives in `src/sanity/queries.ts` via `defineQuery`; fetch with `sanityFetch` and tag by document `_type`.
+- Singleton queries filter on both `_type` and `_id` so TypeGen infers a single type.
+- List ordering uses `orderRank` (@sanity/orderable-document-list). Experience sorts by `startDate desc`, `orderRank` for ties.
+- Images: `<SanityImage>` (Sanity CDN loader), never Vercel's optimizer.
+- `@sanity/icons` v5: import from subpaths, e.g. `@sanity/icons/User`.
+- Next 16: `revalidateTag` needs a second arg; we use `{ expire: 0 }` for immediate freshness.
