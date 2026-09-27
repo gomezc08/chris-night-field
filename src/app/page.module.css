@@ -1,13 +1,38 @@
 .main {
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   place-items: center;
-  background: #04060a;
-  color: #e8edf2;
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  padding: 24px 16px;
+  background: #020306;
 }
 
-.link {
+/* As wide as possible up to 1000px while the whole scene still fits the viewport height. */
+.frame {
+  width: min(1000px, 100%, calc((100dvh - 96px) * 900 / 560));
+}
+
+.pressLink {
+  margin: 10px 2px 0;
+  text-align: right;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-size: 13px;
+}
+
+.pressLink a {
+  color: #9fb0c2;
+  text-underline-offset: 0.2em;
+}
+
+.pressLink a:hover {
   color: #ffb547;
-  font-size: 1.125rem;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }

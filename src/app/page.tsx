@@ -1,13 +1,59 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+import { NightField } from "@/components/field/NightField";
+import { PlacesPanel } from "@/components/panels/PlacesPanel";
+import { ProjectsPanel } from "@/components/panels/ProjectsPanel";
+import {
+  AboutPanel,
+  CreditsPanel,
+  EducationPanel,
+  ExperiencePanel,
+  LinksPanel,
+  SkillsPanel,
+} from "@/components/panels/StaticPanels";
+import type { SpotKey } from "@/scene/constants";
+import { sanityFetch } from "@/sanity/lib/fetch";
+import { CONTENT_TAGS, PRESS_QUERY } from "@/sanity/queries";
+
 import styles from "./page.module.css";
 
-// Placeholder until the night field scene lands in Stage 2.
-export default function Home() {
+async function getContent() {
+  return sanityFetch({ query: PRESS_QUERY, tags: CONTENT_TAGS });
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { profile, siteSettings } = await getContent();
+  return {
+    title: siteSettings?.seoTitle ?? profile?.name ?? undefined,
+    description: siteSettings?.seoDescription ?? profile?.headline ?? undefined,
+  };
+}
+
+export default async function Home() {
+  const data = await getContent();
+
+  // Which content each spot on the field opens.
+  const panels: Record<SpotKey, React.ReactNode> = {
+    bag: <AboutPanel profile={data.profile} />,
+    goalR: <ProjectsPanel projects={data.projects} />,
+    goalL: <LinksPanel links={data.links} />,
+    score: <ExperiencePanel experience={data.experience} />,
+    board: <EducationPanel education={data.education} />,
+    flag: <PlacesPanel places={data.places} />,
+    ballbag: <SkillsPanel skillGroups={data.skillGroups} />,
+    stands: <CreditsPanel credits={data.credits} />,
+  };
+
   return (
     <main className={styles.main}>
-      <Link href="/press" className={styles.link}>
-        Go to the press box
-      </Link>
+      <h1 className={styles.srOnly}>{data.profile?.name ?? "Portfolio"}</h1>
+      <div className={styles.frame}>
+        <NightField scoreboardName={data.siteSettings?.scoreboardName ?? "GOMEZ FC"} panels={panels} />
+        <p className={styles.pressLink}>
+          <Link href="/press">Press box: everything on one page →</Link>
+        </p>
+      </div>
     </main>
   );
 }
