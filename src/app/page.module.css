@@ -1,0 +1,13 @@
+.main {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #04060a;
+  color: #e8edf2;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.link {
+  color: #ffb547;
+  font-size: 1.125rem;
+}

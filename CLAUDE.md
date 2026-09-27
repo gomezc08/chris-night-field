@@ -10,3 +10,5 @@ Gomez Field: a portfolio as a 2D night soccer field. Full spec in `SPEC.md`; `re
 - Keep scene code separate from content code. The scene receives section data as props.
 - When the prototype and the spec disagree, follow the spec and flag the conflict in the stage summary.
 - Git: one branch + PR per stage (`stage-N-name`). Never commit to `main`, never force-push. Push only after Chris approves.
+
+@AGENTS.md
