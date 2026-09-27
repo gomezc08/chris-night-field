@@ -380,63 +380,25 @@ export type AllSanitySchemaTypes =
 
 // Source: src/sanity/queries.ts
 // Variable: PROFILE_QUERY
-// Query: *[_id == "profile"][0]{  name,  headline,  photo {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  bio,  email,  location,  contactNote}
-export type PROFILE_QUERY_RESULT =
-  | {
-      name: null;
-      headline: null;
-      photo: null;
-      bio: null;
-      email: null;
-      location: null;
-      contactNote: null;
-    }
-  | {
-      name: null;
-      headline: null;
-      photo: {
-        _type: "imageWithAlt";
-        asset: SanityImageAssetReference | null;
-        crop: SanityImageCrop | null;
-        hotspot: SanityImageHotspot | null;
-        alt: string;
-        width: number | null;
-        height: number | null;
-        lqip: string | null;
-      } | null;
-      bio: null;
-      email: null;
-      location: null;
-      contactNote: null;
-    }
-  | {
-      name: null;
-      headline: null;
-      photo: null;
-      bio: null;
-      email: null;
-      location: string | null;
-      contactNote: null;
-    }
-  | {
-      name: string;
-      headline: string | null;
-      photo: {
-        _type: "imageWithAlt";
-        asset: SanityImageAssetReference | null;
-        crop: SanityImageCrop | null;
-        hotspot: SanityImageHotspot | null;
-        alt: string;
-        width: number | null;
-        height: number | null;
-        lqip: string | null;
-      } | null;
-      bio: PortableText | null;
-      email: string | null;
-      location: string | null;
-      contactNote: string | null;
-    }
-  | null;
+// Query: *[_type == "profile" && _id == "profile"][0]{  name,  headline,  photo {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  bio,  email,  location,  contactNote}
+export type PROFILE_QUERY_RESULT = {
+  name: string;
+  headline: string | null;
+  photo: {
+    _type: "imageWithAlt";
+    asset: SanityImageAssetReference | null;
+    crop: SanityImageCrop | null;
+    hotspot: SanityImageHotspot | null;
+    alt: string;
+    width: number | null;
+    height: number | null;
+    lqip: string | null;
+  } | null;
+  bio: PortableText | null;
+  email: string | null;
+  location: string | null;
+  contactNote: string | null;
+} | null;
 
 // Source: src/sanity/queries.ts
 // Variable: PROJECTS_QUERY
@@ -541,149 +503,87 @@ export type PLACES_QUERY_RESULT = Array<{
 
 // Source: src/sanity/queries.ts
 // Variable: LINKS_QUERY
-// Query: *[_id == "links"][0]{  github,  linkedin,  otherLinks[]{ _key, label, url },  resume {  "url": asset->url,  "filename": asset->originalFilename,  "size": asset->size}}
-export type LINKS_QUERY_RESULT =
-  | {
-      github: null;
-      linkedin: null;
-      otherLinks: null;
-      resume: null;
-    }
-  | {
-      github: string | null;
-      linkedin: string | null;
-      otherLinks: Array<{
-        _key: string;
-        label: string;
-        url: string;
-      }> | null;
-      resume: {
-        url: string | null;
-        filename: string | null;
-        size: number | null;
-      } | null;
-    }
-  | null;
+// Query: *[_type == "links" && _id == "links"][0]{  github,  linkedin,  otherLinks[]{ _key, label, url },  resume {  "url": asset->url,  "filename": asset->originalFilename,  "size": asset->size}}
+export type LINKS_QUERY_RESULT = {
+  github: string | null;
+  linkedin: string | null;
+  otherLinks: Array<{
+    _key: string;
+    label: string;
+    url: string;
+  }> | null;
+  resume: {
+    url: string | null;
+    filename: string | null;
+    size: number | null;
+  } | null;
+} | null;
 
 // Source: src/sanity/queries.ts
 // Variable: CREDITS_QUERY
-// Query: *[_id == "credits"][0]{  tracks[]{ _key, title, artist, url, "audio": audioFile {  "url": asset->url,  "filename": asset->originalFilename,  "size": asset->size} },  thanks,  builtWith}
-export type CREDITS_QUERY_RESULT =
-  | {
-      tracks: null;
-      thanks: null;
-      builtWith: null;
-    }
-  | {
-      tracks: Array<{
-        _key: string;
-        title: string;
-        artist: string | null;
-        url: string | null;
-        audio: {
-          url: string | null;
-          filename: string | null;
-          size: number | null;
-        } | null;
-      }> | null;
-      thanks: PortableText | null;
-      builtWith: string | null;
-    }
-  | null;
+// Query: *[_type == "credits" && _id == "credits"][0]{  tracks[]{ _key, title, artist, url, "audio": audioFile {  "url": asset->url,  "filename": asset->originalFilename,  "size": asset->size} },  thanks,  builtWith}
+export type CREDITS_QUERY_RESULT = {
+  tracks: Array<{
+    _key: string;
+    title: string;
+    artist: string | null;
+    url: string | null;
+    audio: {
+      url: string | null;
+      filename: string | null;
+      size: number | null;
+    } | null;
+  }> | null;
+  thanks: PortableText | null;
+  builtWith: string | null;
+} | null;
 
 // Source: src/sanity/queries.ts
 // Variable: SITE_SETTINGS_QUERY
-// Query: *[_id == "siteSettings"][0]{  scoreboardName,  seoTitle,  seoDescription,  ogImage {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  "ambientTrack": ambientTrack {  "url": asset->url,  "filename": asset->originalFilename,  "size": asset->size}}
-export type SITE_SETTINGS_QUERY_RESULT =
-  | {
-      scoreboardName: null;
-      seoTitle: null;
-      seoDescription: null;
-      ogImage: null;
-      ambientTrack: null;
-    }
-  | {
-      scoreboardName: string | null;
-      seoTitle: string | null;
-      seoDescription: string | null;
-      ogImage: {
-        _type: "image";
-        asset: SanityImageAssetReference | null;
-        crop: SanityImageCrop | null;
-        hotspot: SanityImageHotspot | null;
-        alt: null;
-        width: number | null;
-        height: number | null;
-        lqip: string | null;
-      } | null;
-      ambientTrack: {
-        url: string | null;
-        filename: string | null;
-        size: number | null;
-      } | null;
-    }
-  | null;
+// Query: *[_type == "siteSettings" && _id == "siteSettings"][0]{  scoreboardName,  seoTitle,  seoDescription,  ogImage {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  "ambientTrack": ambientTrack {  "url": asset->url,  "filename": asset->originalFilename,  "size": asset->size}}
+export type SITE_SETTINGS_QUERY_RESULT = {
+  scoreboardName: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  ogImage: {
+    _type: "image";
+    asset: SanityImageAssetReference | null;
+    crop: SanityImageCrop | null;
+    hotspot: SanityImageHotspot | null;
+    alt: null;
+    width: number | null;
+    height: number | null;
+    lqip: string | null;
+  } | null;
+  ambientTrack: {
+    url: string | null;
+    filename: string | null;
+    size: number | null;
+  } | null;
+} | null;
 
 // Source: src/sanity/queries.ts
 // Variable: PRESS_QUERY
-// Query: {  "profile": *[_id == "profile"][0]{  name,  headline,  photo {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  bio,  email,  location,  contactNote},  "projects": *[_type == "project" && defined(slug.current)] | order(orderRank asc){  _id,  title,  "slug": slug.current,  blurb,  description,  images[] {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  role,  stack,  links[]{ _key, label, url },  featured},  "experience": *[_type == "experience"] | order(startDate desc, orderRank asc){  _id,  company,  role,  startDate,  endDate,  location,  summary,  logo {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip}},  "education": *[_type == "education"] | order(orderRank asc){  _id,  school,  degree,  field,  startDate,  endDate,  honors,  publications[]{ _key, title, venue, url }},  "skillGroups": *[_type == "skillGroup"] | order(orderRank asc){  _id,  label,  items},  "places": *[_type == "place"] | order(orderRank asc){  _id,  city,  region,  years,  photo {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  note},  "links": *[_id == "links"][0]{  github,  linkedin,  otherLinks[]{ _key, label, url },  resume {  "url": asset->url,  "filename": asset->originalFilename,  "size": asset->size}},  "credits": *[_id == "credits"][0]{  tracks[]{ _key, title, artist, url, "audio": audioFile {  "url": asset->url,  "filename": asset->originalFilename,  "size": asset->size} },  thanks,  builtWith},  "siteSettings": *[_id == "siteSettings"][0]{  scoreboardName,  seoTitle,  seoDescription,  ogImage {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  "ambientTrack": ambientTrack {  "url": asset->url,  "filename": asset->originalFilename,  "size": asset->size}}}
+// Query: {  "profile": *[_type == "profile" && _id == "profile"][0]{  name,  headline,  photo {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  bio,  email,  location,  contactNote},  "projects": *[_type == "project" && defined(slug.current)] | order(orderRank asc){  _id,  title,  "slug": slug.current,  blurb,  description,  images[] {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  role,  stack,  links[]{ _key, label, url },  featured},  "experience": *[_type == "experience"] | order(startDate desc, orderRank asc){  _id,  company,  role,  startDate,  endDate,  location,  summary,  logo {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip}},  "education": *[_type == "education"] | order(orderRank asc){  _id,  school,  degree,  field,  startDate,  endDate,  honors,  publications[]{ _key, title, venue, url }},  "skillGroups": *[_type == "skillGroup"] | order(orderRank asc){  _id,  label,  items},  "places": *[_type == "place"] | order(orderRank asc){  _id,  city,  region,  years,  photo {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  note},  "links": *[_type == "links" && _id == "links"][0]{  github,  linkedin,  otherLinks[]{ _key, label, url },  resume {  "url": asset->url,  "filename": asset->originalFilename,  "size": asset->size}},  "credits": *[_type == "credits" && _id == "credits"][0]{  tracks[]{ _key, title, artist, url, "audio": audioFile {  "url": asset->url,  "filename": asset->originalFilename,  "size": asset->size} },  thanks,  builtWith},  "siteSettings": *[_type == "siteSettings" && _id == "siteSettings"][0]{  scoreboardName,  seoTitle,  seoDescription,  ogImage {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  "ambientTrack": ambientTrack {  "url": asset->url,  "filename": asset->originalFilename,  "size": asset->size}}}
 export type PRESS_QUERY_RESULT = {
-  profile:
-    | {
-        name: null;
-        headline: null;
-        photo: null;
-        bio: null;
-        email: null;
-        location: null;
-        contactNote: null;
-      }
-    | {
-        name: null;
-        headline: null;
-        photo: {
-          _type: "imageWithAlt";
-          asset: SanityImageAssetReference | null;
-          crop: SanityImageCrop | null;
-          hotspot: SanityImageHotspot | null;
-          alt: string;
-          width: number | null;
-          height: number | null;
-          lqip: string | null;
-        } | null;
-        bio: null;
-        email: null;
-        location: null;
-        contactNote: null;
-      }
-    | {
-        name: null;
-        headline: null;
-        photo: null;
-        bio: null;
-        email: null;
-        location: string | null;
-        contactNote: null;
-      }
-    | {
-        name: string;
-        headline: string | null;
-        photo: {
-          _type: "imageWithAlt";
-          asset: SanityImageAssetReference | null;
-          crop: SanityImageCrop | null;
-          hotspot: SanityImageHotspot | null;
-          alt: string;
-          width: number | null;
-          height: number | null;
-          lqip: string | null;
-        } | null;
-        bio: PortableText | null;
-        email: string | null;
-        location: string | null;
-        contactNote: string | null;
-      }
-    | null;
+  profile: {
+    name: string;
+    headline: string | null;
+    photo: {
+      _type: "imageWithAlt";
+      asset: SanityImageAssetReference | null;
+      crop: SanityImageCrop | null;
+      hotspot: SanityImageHotspot | null;
+      alt: string;
+      width: number | null;
+      height: number | null;
+      lqip: string | null;
+    } | null;
+    bio: PortableText | null;
+    email: string | null;
+    location: string | null;
+    contactNote: string | null;
+  } | null;
   projects: Array<{
     _id: string;
     title: string;
@@ -765,94 +665,70 @@ export type PRESS_QUERY_RESULT = {
     } | null;
     note: string | null;
   }>;
-  links:
-    | {
-        github: null;
-        linkedin: null;
-        otherLinks: null;
-        resume: null;
-      }
-    | {
-        github: string | null;
-        linkedin: string | null;
-        otherLinks: Array<{
-          _key: string;
-          label: string;
-          url: string;
-        }> | null;
-        resume: {
-          url: string | null;
-          filename: string | null;
-          size: number | null;
-        } | null;
-      }
-    | null;
-  credits:
-    | {
-        tracks: null;
-        thanks: null;
-        builtWith: null;
-      }
-    | {
-        tracks: Array<{
-          _key: string;
-          title: string;
-          artist: string | null;
-          url: string | null;
-          audio: {
-            url: string | null;
-            filename: string | null;
-            size: number | null;
-          } | null;
-        }> | null;
-        thanks: PortableText | null;
-        builtWith: string | null;
-      }
-    | null;
-  siteSettings:
-    | {
-        scoreboardName: null;
-        seoTitle: null;
-        seoDescription: null;
-        ogImage: null;
-        ambientTrack: null;
-      }
-    | {
-        scoreboardName: string | null;
-        seoTitle: string | null;
-        seoDescription: string | null;
-        ogImage: {
-          _type: "image";
-          asset: SanityImageAssetReference | null;
-          crop: SanityImageCrop | null;
-          hotspot: SanityImageHotspot | null;
-          alt: null;
-          width: number | null;
-          height: number | null;
-          lqip: string | null;
-        } | null;
-        ambientTrack: {
-          url: string | null;
-          filename: string | null;
-          size: number | null;
-        } | null;
-      }
-    | null;
+  links: {
+    github: string | null;
+    linkedin: string | null;
+    otherLinks: Array<{
+      _key: string;
+      label: string;
+      url: string;
+    }> | null;
+    resume: {
+      url: string | null;
+      filename: string | null;
+      size: number | null;
+    } | null;
+  } | null;
+  credits: {
+    tracks: Array<{
+      _key: string;
+      title: string;
+      artist: string | null;
+      url: string | null;
+      audio: {
+        url: string | null;
+        filename: string | null;
+        size: number | null;
+      } | null;
+    }> | null;
+    thanks: PortableText | null;
+    builtWith: string | null;
+  } | null;
+  siteSettings: {
+    scoreboardName: string | null;
+    seoTitle: string | null;
+    seoDescription: string | null;
+    ogImage: {
+      _type: "image";
+      asset: SanityImageAssetReference | null;
+      crop: SanityImageCrop | null;
+      hotspot: SanityImageHotspot | null;
+      alt: null;
+      width: number | null;
+      height: number | null;
+      lqip: string | null;
+    } | null;
+    ambientTrack: {
+      url: string | null;
+      filename: string | null;
+      size: number | null;
+    } | null;
+  } | null;
 };
 
 // Query TypeMap
 declare global {
   interface SanityQueries {
-    '*[_id == "profile"][0]{\n  name,\n  headline,\n  photo {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  bio,\n  email,\n  location,\n  contactNote\n}': PROFILE_QUERY_RESULT;
+    '*[_type == "profile" && _id == "profile"][0]{\n  name,\n  headline,\n  photo {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  bio,\n  email,\n  location,\n  contactNote\n}': PROFILE_QUERY_RESULT;
     '*[_type == "project" && defined(slug.current)] | order(orderRank asc){\n  _id,\n  title,\n  "slug": slug.current,\n  blurb,\n  description,\n  images[] {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  role,\n  stack,\n  links[]{ _key, label, url },\n  featured\n}': PROJECTS_QUERY_RESULT;
     '*[_type == "experience"] | order(startDate desc, orderRank asc){\n  _id,\n  company,\n  role,\n  startDate,\n  endDate,\n  location,\n  summary,\n  logo {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n}\n}': EXPERIENCE_QUERY_RESULT;
     '*[_type == "education"] | order(orderRank asc){\n  _id,\n  school,\n  degree,\n  field,\n  startDate,\n  endDate,\n  honors,\n  publications[]{ _key, title, venue, url }\n}': EDUCATION_QUERY_RESULT;
     '*[_type == "skillGroup"] | order(orderRank asc){\n  _id,\n  label,\n  items\n}': SKILL_GROUPS_QUERY_RESULT;
     '*[_type == "place"] | order(orderRank asc){\n  _id,\n  city,\n  region,\n  years,\n  photo {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  note\n}': PLACES_QUERY_RESULT;
-    '*[_id == "links"][0]{\n  github,\n  linkedin,\n  otherLinks[]{ _key, label, url },\n  resume {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n}\n}': LINKS_QUERY_RESULT;
-    '*[_id == "credits"][0]{\n  tracks[]{ _key, title, artist, url, "audio": audioFile {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n} },\n  thanks,\n  builtWith\n}': CREDITS_QUERY_RESULT;
-    '*[_id == "siteSettings"][0]{\n  scoreboardName,\n  seoTitle,\n  seoDescription,\n  ogImage {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  "ambientTrack": ambientTrack {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n}\n}': SITE_SETTINGS_QUERY_RESULT;
-    '{\n  "profile": *[_id == "profile"][0]{\n  name,\n  headline,\n  photo {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  bio,\n  email,\n  location,\n  contactNote\n},\n  "projects": *[_type == "project" && defined(slug.current)] | order(orderRank asc){\n  _id,\n  title,\n  "slug": slug.current,\n  blurb,\n  description,\n  images[] {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  role,\n  stack,\n  links[]{ _key, label, url },\n  featured\n},\n  "experience": *[_type == "experience"] | order(startDate desc, orderRank asc){\n  _id,\n  company,\n  role,\n  startDate,\n  endDate,\n  location,\n  summary,\n  logo {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n}\n},\n  "education": *[_type == "education"] | order(orderRank asc){\n  _id,\n  school,\n  degree,\n  field,\n  startDate,\n  endDate,\n  honors,\n  publications[]{ _key, title, venue, url }\n},\n  "skillGroups": *[_type == "skillGroup"] | order(orderRank asc){\n  _id,\n  label,\n  items\n},\n  "places": *[_type == "place"] | order(orderRank asc){\n  _id,\n  city,\n  region,\n  years,\n  photo {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  note\n},\n  "links": *[_id == "links"][0]{\n  github,\n  linkedin,\n  otherLinks[]{ _key, label, url },\n  resume {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n}\n},\n  "credits": *[_id == "credits"][0]{\n  tracks[]{ _key, title, artist, url, "audio": audioFile {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n} },\n  thanks,\n  builtWith\n},\n  "siteSettings": *[_id == "siteSettings"][0]{\n  scoreboardName,\n  seoTitle,\n  seoDescription,\n  ogImage {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  "ambientTrack": ambientTrack {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n}\n}\n}': PRESS_QUERY_RESULT;
+    '*[_type == "links" && _id == "links"][0]{\n  github,\n  linkedin,\n  otherLinks[]{ _key, label, url },\n  resume {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n}\n}': LINKS_QUERY_RESULT;
+    '*[_type == "credits" && _id == "credits"][0]{\n  tracks[]{ _key, title, artist, url, "audio": audioFile {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n} },\n  thanks,\n  builtWith\n}': CREDITS_QUERY_RESULT;
+    '*[_type == "siteSettings" && _id == "siteSettings"][0]{\n  scoreboardName,\n  seoTitle,\n  seoDescription,\n  ogImage {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  "ambientTrack": ambientTrack {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n}\n}': SITE_SETTINGS_QUERY_RESULT;
+    '{\n  "profile": *[_type == "profile" && _id == "profile"][0]{\n  name,\n  headline,\n  photo {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  bio,\n  email,\n  location,\n  contactNote\n},\n  "projects": *[_type == "project" && defined(slug.current)] | order(orderRank asc){\n  _id,\n  title,\n  "slug": slug.current,\n  blurb,\n  description,\n  images[] {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  role,\n  stack,\n  links[]{ _key, label, url },\n  featured\n},\n  "experience": *[_type == "experience"] | order(startDate desc, orderRank asc){\n  _id,\n  company,\n  role,\n  startDate,\n  endDate,\n  location,\n  summary,\n  logo {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n}\n},\n  "education": *[_type == "education"] | order(orderRank asc){\n  _id,\n  school,\n  degree,\n  field,\n  startDate,\n  endDate,\n  honors,\n  publications[]{ _key, title, venue, url }\n},\n  "skillGroups": *[_type == "skillGroup"] | order(orderRank asc){\n  _id,\n  label,\n  items\n},\n  "places": *[_type == "place"] | order(orderRank asc){\n  _id,\n  city,\n  region,\n  years,\n  photo {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  note\n},\n  "links": *[_type == "links" && _id == "links"][0]{\n  github,\n  linkedin,\n  otherLinks[]{ _key, label, url },\n  resume {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n}\n},\n  "credits": *[_type == "credits" && _id == "credits"][0]{\n  tracks[]{ _key, title, artist, url, "audio": audioFile {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n} },\n  thanks,\n  builtWith\n},\n  "siteSettings": *[_type == "siteSettings" && _id == "siteSettings"][0]{\n  scoreboardName,\n  seoTitle,\n  seoDescription,\n  ogImage {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  "ambientTrack": ambientTrack {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n}\n}\n}': PRESS_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too

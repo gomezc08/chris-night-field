@@ -18,7 +18,7 @@ const FILE = /* groq */ `{
   "size": asset->size
 }`;
 
-const PROFILE = /* groq */ `*[_id == "profile"][0]{
+const PROFILE = /* groq */ `*[_type == "profile" && _id == "profile"][0]{
   name,
   headline,
   photo ${IMAGE},
@@ -78,20 +78,20 @@ const PLACES = /* groq */ `*[_type == "place"] | order(orderRank asc){
   note
 }`;
 
-const LINKS = /* groq */ `*[_id == "links"][0]{
+const LINKS = /* groq */ `*[_type == "links" && _id == "links"][0]{
   github,
   linkedin,
   otherLinks[]{ _key, label, url },
   resume ${FILE}
 }`;
 
-const CREDITS = /* groq */ `*[_id == "credits"][0]{
+const CREDITS = /* groq */ `*[_type == "credits" && _id == "credits"][0]{
   tracks[]{ _key, title, artist, url, "audio": audioFile ${FILE} },
   thanks,
   builtWith
 }`;
 
-const SITE_SETTINGS = /* groq */ `*[_id == "siteSettings"][0]{
+const SITE_SETTINGS = /* groq */ `*[_type == "siteSettings" && _id == "siteSettings"][0]{
   scoreboardName,
   seoTitle,
   seoDescription,
