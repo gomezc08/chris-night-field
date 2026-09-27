@@ -33,8 +33,6 @@ export type NightFieldOptions = DirectorEvents & {
   playerRenderer?: PlayerRenderer;
   /** Start with the floodlights already on (mobile hero). */
   skipIntro?: boolean;
-  /** prefers-reduced-motion: a lit still frame, player standing at center, no routines. */
-  reducedMotion?: boolean;
   onSound?: (sound: SceneSound) => void;
 };
 
@@ -66,36 +64,23 @@ export function createNightField(
   const ctx = canvas.getContext("2d")!;
   const state = createSceneState();
   const scenery = createScenery();
-  const still = !!options.reducedMotion;
   const renderPlayer = options.playerRenderer ?? stickFigure;
   const emit = (s: SceneSound) => options.onSound?.(s);
   let scoreboardName = options.scoreboardName;
 
-  const player: PlayerState = {
-    x: CENTER[0],
-    y: CENTER[1],
-    facing: 1,
-    pose: still ? "stand" : "juggle",
-  };
+  const player: PlayerState = { x: CENTER[0], y: CENTER[1], facing: 1, pose: "juggle" };
   const ball = createBall();
-  if (still) ball.mode = "foot";
+  const director = createDirector(state, player, ball, {
+    onOpen: (key) => options.onOpen(key),
+    onHide: () => options.onHide(),
+  });
 
-  const director = createDirector(
-    state,
-    player,
-    ball,
-    { onOpen: (key) => options.onOpen(key), onHide: () => options.onHide() },
-    { instant: still },
-  );
-
-  // Cached static layer, redrawn only when the canvas resizes.
+  // Cached static layer, redrawn whenever its size is out of date.
   const staticLayer = document.createElement("canvas");
   const staticCtx = staticLayer.getContext("2d")!;
 
   let scale = 1; // CSS px per design unit
   let dpr = 1;
-  // In reduced motion nothing moves, so frames are only drawn when something changes.
-  let dirty = true;
 
   function resize() {
     const cssW = canvas.clientWidth || W;
@@ -103,12 +88,13 @@ export function createNightField(
     scale = cssW / W;
     const pxW = Math.round(cssW * dpr);
     const pxH = Math.round(((cssW * H) / W) * dpr);
-    if (canvas.width === pxW && canvas.height === pxH) return;
+    // Compare against the static layer, not the canvas: a new engine on a canvas that an
+    // earlier engine already sized must still draw its own background.
+    if (staticLayer.width === pxW && staticLayer.height === pxH) return;
     canvas.width = staticLayer.width = pxW;
     canvas.height = staticLayer.height = pxH;
     staticCtx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
     drawStatic(staticCtx, scenery);
-    dirty = true;
   }
 
   const observer = new ResizeObserver(resize);
@@ -118,11 +104,10 @@ export function createNightField(
   // --- Clock and floodlights -------------------------------------------------
 
   let t = 0; // scene time
-  let lightTime = options.skipIntro || still ? LIT : 0; // drives the intro
+  let lightTime = options.skipIntro ? LIT : 0; // drives the intro
   let flicker = 1;
   let flickerTimer = 0;
-  // Starts all-off even when the intro is skipped, so listeners still hear about every tower.
-  const towerWasOn = TOWERS.map(() => false);
+  const towerWasOn = TOWERS.map(() => lightTime > 0);
 
   function towerIntensity(i: number) {
     const on = INTRO_FIRST_TOWER + i * INTRO_TOWER_GAP;
@@ -185,15 +170,12 @@ export function createNightField(
 
   function frame(now: number) {
     raf = requestAnimationFrame(frame);
-    const dt = still || last === null ? 0 : Math.min(0.05, (now - last) / 1000);
+    const dt = last === null ? 0 : Math.min(0.05, (now - last) / 1000);
     last = now;
-    if (still && !dirty) return;
-    dirty = false;
-
     t += dt;
     lightTime += dt;
 
-    if (!still) updateFlicker(dt);
+    updateFlicker(dt);
     director.update(dt, lightTime);
     state.ripple.L = Math.max(0, state.ripple.L - dt * 1.2);
     state.ripple.R = Math.max(0, state.ripple.R - dt * 1.2);
@@ -223,26 +205,17 @@ export function createNightField(
 
   return {
     state,
-    select: (key) => {
-      director.select(key);
-      dirty = true;
-    },
-    close: () => {
-      director.close();
-      dirty = true;
-    },
+    select: (key) => void director.select(key),
+    close: () => void director.close(),
     setHover: (key) => {
       state.hover = key;
-      dirty = true;
     },
     setShowAll: (on, labels = true) => {
       state.showAll = on;
       state.showLabels = labels;
-      dirty = true;
     },
     setScoreboardName: (name) => {
       scoreboardName = name;
-      dirty = true;
     },
     destroy: () => {
       cancelAnimationFrame(raf);
