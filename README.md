@@ -141,7 +141,6 @@ scripts/generate-sounds.ts    Synthesizes public/sounds/*.wav
 sanity.config.ts              Studio config
 sanity.cli.ts                 Sanity CLI and TypeGen config
 reference/                    Prototype and screenshots (source of truth for the scene)
-SPEC.md                       Build spec
 ```
 
 ## Free-tier notes

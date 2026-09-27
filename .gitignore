@@ -44,3 +44,7 @@ next-env.d.ts
 # sanity
 .sanity/
 /schema.json
+
+# docs
+SPEC.md
+CLAUDE.md
