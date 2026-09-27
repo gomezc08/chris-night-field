@@ -37,7 +37,7 @@ export function createScenery(rand: () => number = Math.random): Scenery {
   }
 
   const city: Scenery["city"] = [];
-  for (let x = SCENERY_LEFT; x < SCENERY_RIGHT; ) {
+  for (let x = SCENERY_LEFT; x < SCENERY_RIGHT;) {
     const w = 20 + rand() * 40;
     const h = 12 + rand() * 30;
     const windows: Pt[] = [];
@@ -169,7 +169,13 @@ function drawPitch(ctx: Ctx) {
     dot(ctx, gx + s * 80, 315, 2);
     // The "D": only the part of the circle outside the box, meeting the 18-yard line exactly.
     ctx.beginPath();
-    ctx.arc(gx + s * 80, 315, 40, s > 0 ? -D_ARC : Math.PI - D_ARC, s > 0 ? D_ARC : Math.PI + D_ARC);
+    ctx.arc(
+      gx + s * 80,
+      315,
+      40,
+      s > 0 ? -D_ARC : Math.PI - D_ARC,
+      s > 0 ? D_ARC : Math.PI + D_ARC,
+    );
     ctx.stroke();
   }
 
@@ -277,17 +283,35 @@ function drawGoal(ctx: Ctx, x: number, s: 1 | -1, ripple: number, t: number) {
   line(ctx, [x, 275], [x, 355]);
 }
 
+/**
+ * Planted just outside the corner (not on the touchline, where it disappeared),
+ * with a taller warm-white pole, a dark outline, and a bigger waving flag.
+ */
 function drawCornerFlag(ctx: Ctx, t: number) {
-  ctx.strokeStyle = "#d8dcd8";
-  ctx.lineWidth = 2;
-  line(ctx, [840, 490], [840, 456]);
+  const x = 845;
+  const base = 493;
+  const top = 448;
+
+  ctx.lineCap = "round";
+  ctx.strokeStyle = "rgba(0,0,0,.55)";
+  ctx.lineWidth = 4.5;
+  line(ctx, [x, base], [x, top]);
+  ctx.strokeStyle = "#f3ead0";
+  ctx.lineWidth = 2.6;
+  line(ctx, [x, base], [x, top]);
+  ctx.lineCap = "butt";
+
+  const wave = Math.sin(t * 3) * 2.5;
   ctx.fillStyle = COLORS.amber;
-  const wave = Math.sin(t * 3) * 2;
+  ctx.strokeStyle = "rgba(0,0,0,.35)";
+  ctx.lineWidth = 0.8;
   ctx.beginPath();
-  ctx.moveTo(840, 456);
-  ctx.quadraticCurveTo(848, 458 + wave, 856, 461);
-  ctx.lineTo(840, 467);
+  ctx.moveTo(x + 1, top);
+  ctx.quadraticCurveTo(x + 9, top + 2 + wave, x + 18, top + 6);
+  ctx.quadraticCurveTo(x + 9, top + 10 + wave * 0.6, x + 1, top + 14);
+  ctx.closePath();
   ctx.fill();
+  ctx.stroke();
 }
 
 /**

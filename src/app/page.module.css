@@ -3,45 +3,50 @@
   background: #020306;
 }
 
-/* Always-visible way to the plain version, floating over the scene's top-right corner. */
+/* Always-visible way to the plain version: a round profile button in the top-right corner. */
 .pressLink {
   position: fixed;
-  top: 18px;
-  right: 18px;
+  top: 20px;
+  right: 20px;
   /* Above the start screen too, so recruiters can skip straight to the press box. */
   z-index: 30;
-  padding: 8px 14px;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  overflow: hidden;
   background: rgba(8, 12, 18, 0.72);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
   color: #e8edf2;
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
-  font-size: 13px;
-  text-decoration: none;
   transition:
-    color 0.15s,
-    border-color 0.15s;
+    border-color 0.15s,
+    transform 0.15s,
+    box-shadow 0.15s;
+}
+
+.pressLink img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .pressLink:hover,
 .pressLink:focus-visible {
-  color: #ffb547;
-  border-color: rgba(255, 181, 71, 0.6);
+  border-color: #ffb547;
+  box-shadow: 0 0 0 4px rgba(255, 181, 71, 0.18);
+  transform: translateY(-1px);
+  outline: none;
 }
 
-/* Phones: a clear, full-width button to the press box along the top. */
 @media (max-width: 700px) {
   .pressLink {
-    top: calc(12px + env(safe-area-inset-top));
-    left: 16px;
-    right: 16px;
-    padding: 12px 16px;
-    border-color: #ffb547;
-    color: #ffb547;
-    text-align: center;
-    font-size: 15px;
+    top: calc(14px + env(safe-area-inset-top));
+    right: 14px;
+    width: 46px;
+    height: 46px;
   }
 }
 
