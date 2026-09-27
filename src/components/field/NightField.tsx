@@ -30,7 +30,7 @@ const TAB_ORDER: SpotKey[] = [
   "ballbag",
   "flag",
   "goalL",
-  "bag", // Credits
+  "bag", // Accomplishments
 ];
 
 const MOBILE = "(max-width: 700px)";

@@ -86,10 +86,13 @@ const LINKS = /* groq */ `*[_type == "links" && _id == "links"][0]{
   resume ${FILE}
 }`;
 
-const CREDITS = /* groq */ `*[_type == "credits" && _id == "credits"][0]{
-  tracks[]{ _key, title, artist, url, "audio": audioFile ${FILE} },
-  thanks,
-  builtWith
+const ACCOMPLISHMENTS = /* groq */ `*[_type == "accomplishment"] | order(orderRank asc){
+  _id,
+  title,
+  organization,
+  date,
+  description,
+  url
 }`;
 
 const SITE_SETTINGS = /* groq */ `*[_type == "siteSettings" && _id == "siteSettings"][0]{
@@ -108,7 +111,7 @@ export const EDUCATION_QUERY = defineQuery(EDUCATION);
 export const SKILL_GROUPS_QUERY = defineQuery(SKILL_GROUPS);
 export const PLACES_QUERY = defineQuery(PLACES);
 export const LINKS_QUERY = defineQuery(LINKS);
-export const CREDITS_QUERY = defineQuery(CREDITS);
+export const ACCOMPLISHMENTS_QUERY = defineQuery(ACCOMPLISHMENTS);
 export const SITE_SETTINGS_QUERY = defineQuery(SITE_SETTINGS);
 
 // Every section in one round trip. Used by /press and the scene at /.
@@ -120,7 +123,7 @@ export const PRESS_QUERY = defineQuery(`{
   "skillGroups": ${SKILL_GROUPS},
   "places": ${PLACES},
   "links": ${LINKS},
-  "credits": ${CREDITS},
+  "accomplishments": ${ACCOMPLISHMENTS},
   "siteSettings": ${SITE_SETTINGS}
 }`);
 
@@ -133,6 +136,6 @@ export const CONTENT_TAGS = [
   "skillGroup",
   "place",
   "links",
-  "credits",
+  "accomplishment",
   "siteSettings",
 ];

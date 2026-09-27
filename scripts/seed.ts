@@ -194,11 +194,13 @@ async function main() {
       resume: { _type: "file", asset: { _type: "reference", _ref: resume._id } },
     },
     {
-      _id: "credits",
-      _type: "credits",
-      tracks: [{ _type: "track", _key: key(), title: "Placeholder track", artist: "Artist" }],
-      thanks: [para("Thanks to everyone who helped. Replace this in Studio.")],
-      builtWith: "Next.js, Sanity, and a canvas",
+      _id: "seed-accomplishment",
+      _type: "accomplishment",
+      title: "Placeholder accomplishment",
+      organization: "Organization or event",
+      date: "2025",
+      description: "One or two sentences about it. Replace this in Studio.",
+      orderRank: "0|100000:",
     },
     {
       _id: "siteSettings",

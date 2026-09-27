@@ -10,7 +10,7 @@ import { PlacesPanel } from "@/components/panels/PlacesPanel";
 import { ProjectsPanel } from "@/components/panels/ProjectsPanel";
 import {
   AboutPanel,
-  CreditsPanel,
+  AccomplishmentsPanel,
   EducationPanel,
   ExperiencePanel,
   LinksPanel,
@@ -35,7 +35,7 @@ export default async function Home() {
 
   // Which content each spot on the field opens.
   const panels: Record<SpotKey, React.ReactNode> = {
-    bag: <CreditsPanel credits={data.credits} />,
+    bag: <AccomplishmentsPanel accomplishments={data.accomplishments} />,
     goalR: <ProjectsPanel projects={data.projects} />,
     goalL: <LinksPanel links={data.links} />,
     score: <ExperiencePanel experience={data.experience} />,

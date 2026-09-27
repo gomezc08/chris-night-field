@@ -1,6 +1,6 @@
 import type { SchemaTypeDefinition } from "sanity";
 
-import { credits } from "./credits";
+import { accomplishment } from "./accomplishment";
 import { education } from "./education";
 import { experience } from "./experience";
 import { imageWithAlt } from "./imageWithAlt";
@@ -21,7 +21,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   // Singletons
   profile,
   links,
-  credits,
   siteSettings,
   // Lists
   project,
@@ -29,6 +28,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   education,
   place,
   skillGroup,
+  accomplishment,
 ];
 
-export const singletonTypes = new Set(["profile", "links", "credits", "siteSettings"]);
+export const singletonTypes = new Set(["profile", "links", "siteSettings"]);

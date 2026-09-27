@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import {
   About,
-  Credits,
+  Accomplishments,
   Education,
   Experience,
   Links,
@@ -40,7 +40,7 @@ export default async function PressPage() {
     skills: data.skillGroups.length > 0,
     places: data.places.length > 0,
     links: !!data.links,
-    credits: !!data.credits,
+    accomplishments: data.accomplishments.length > 0,
   };
 
   return (
@@ -82,7 +82,7 @@ export default async function PressPage() {
         <Skills skillGroups={data.skillGroups} />
         <Places places={data.places} />
         <Links links={data.links} />
-        <Credits credits={data.credits} />
+        <Accomplishments accomplishments={data.accomplishments} />
       </main>
 
       <footer className={styles.footer}>

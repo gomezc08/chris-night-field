@@ -17,7 +17,7 @@ The site opens on a black loading screen (a spinning ball counting to 100%) and 
 | Tactics board | Education |
 | Corner flag | Places I've lived |
 | Ball bag | Skills and stack |
-| Bag on the bench | Credits |
+| Bag on the bench | Accomplishments |
 
 [`/press`](http://localhost:3000/press) is the "press box": every section on one fast, plain page for recruiters, SEO, and mobile.
 
@@ -88,7 +88,7 @@ Go to `/studio` on the live site (or locally) and log in with your Sanity accoun
 | **Skills and stack** | Skill groups (e.g. Languages, Infra) and their chips. Drag to reorder. |
 | **Places I've lived** | City cards with photo, years, and a short note. Drag to reorder. |
 | **Links** | GitHub, LinkedIn, other links, and the resume PDF. Uploading a new PDF changes what "Download resume" serves. |
-| **Credits** | Soundtrack entries (optionally with audio), thanks, and "built with". |
+| **Accomplishments** | Awards, wins, and highlights: title, organization or event, date, a short description, and an optional link. Drag to reorder. |
 | **Site settings** | Scoreboard name, SEO title and description, share image, and ambient track. |
 
 Hit **Publish** and the live site updates within a few seconds. No redeploy needed.
@@ -102,7 +102,7 @@ Hit **Publish** and the live site updates within a few seconds. No redeploy need
    - **URL:** `https://your-site.vercel.app/api/revalidate`
    - **Dataset:** `production`
    - **Trigger on:** Create, Update, Delete
-   - **Filter:** `_type in ["profile", "project", "experience", "education", "skillGroup", "place", "links", "credits", "siteSettings"]`
+   - **Filter:** `_type in ["profile", "project", "experience", "education", "skillGroup", "place", "links", "accomplishment", "siteSettings"]`
    - **Projection:** `{_type}`
    - **HTTP method:** POST
    - **Secret:** the same value as `SANITY_REVALIDATE_SECRET`

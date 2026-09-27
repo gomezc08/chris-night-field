@@ -2,7 +2,6 @@ import { RichText } from "@/components/RichText";
 import { SanityImage } from "@/components/SanityImage";
 import { formatBytes, formatRange } from "@/lib/format";
 
-import { TrackButton } from "./TrackButton";
 import type { SiteContent } from "./types";
 import s from "./panels.module.css";
 
@@ -158,38 +157,27 @@ export function SkillsPanel({ skillGroups }: { skillGroups: SiteContent["skillGr
   );
 }
 
-export function CreditsPanel({ credits }: { credits: SiteContent["credits"] }) {
-  if (!credits) return <Empty />;
+export function AccomplishmentsPanel({
+  accomplishments,
+}: {
+  accomplishments: SiteContent["accomplishments"];
+}) {
+  if (!accomplishments.length) return <Empty />;
   return (
-    <div className={`${s.body} ${s.credits}`}>
-      {!!credits.tracks?.length && (
-        <>
-          <p className={s.subhead}>Soundtrack</p>
-          <ul className={s.list}>
-            {credits.tracks.map((t) => (
-              <li key={t._key} className={s.track}>
-                {t.audio?.url && <TrackButton src={t.audio.url} title={t.title} />}
-                <span>
-                  {t.url ? <External href={t.url}>{t.title}</External> : t.title}
-                  {t.artist && <span className={s.muted}> · {t.artist}</span>}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-      {!!credits.thanks?.length && (
-        <>
-          <p className={s.subhead}>Thanks</p>
-          <RichText value={credits.thanks} />
-        </>
-      )}
-      {credits.builtWith && (
-        <>
-          <p className={s.subhead}>Built with</p>
-          <p className={s.small}>{credits.builtWith}</p>
-        </>
-      )}
-    </div>
+    <ol className={`${s.body} ${s.list}`}>
+      {accomplishments.map((a) => (
+        <li key={a._id} className={s.card}>
+          <h3 className={s.h3}>
+            {a.url ? <External href={a.url}>{a.title}</External> : a.title}
+          </h3>
+          {(a.organization || a.date) && (
+            <p className={`${s.muted} ${s.small}`}>
+              {[a.organization, a.date].filter(Boolean).join(" · ")}
+            </p>
+          )}
+          {a.description && <p className={s.small}>{a.description}</p>}
+        </li>
+      ))}
+    </ol>
   );
 }

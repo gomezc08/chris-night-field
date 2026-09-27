@@ -321,19 +321,6 @@
   color: var(--muted);
 }
 
-.track {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-
-.track audio {
-  height: 2rem;
-  max-width: 100%;
-}
-
 .footer {
   margin-top: 3rem;
   padding-top: 1.25rem;
@@ -358,8 +345,7 @@
 
   .toc,
   .skip,
-  .footer,
-  .track audio {
+  .footer {
     display: none;
   }
 }
