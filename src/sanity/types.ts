@@ -206,6 +206,16 @@ export type SanityImageHotspot = {
   width: number;
 };
 
+export type SiteAbout = {
+  _id: string;
+  _type: "siteAbout";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  heading: string;
+  body?: PortableText;
+};
+
 export type Links = {
   _id: string;
   _type: "links";
@@ -359,6 +369,7 @@ export type AllSanitySchemaTypes =
   | SiteSettings
   | SanityImageCrop
   | SanityImageHotspot
+  | SiteAbout
   | Links
   | Profile
   | LinkItem
@@ -559,6 +570,106 @@ export type SITE_SETTINGS_QUERY_RESULT = {
 } | null;
 
 // Source: src/sanity/queries.ts
+// Variable: SITE_ABOUT_QUERY
+// Query: *[_type == "siteAbout" && _id == "siteAbout"][0]{  heading,  body}
+export type SITE_ABOUT_QUERY_RESULT = {
+  heading: string;
+  body: PortableText | null;
+} | null;
+
+// Source: src/sanity/queries.ts
+// Variable: START_QUERY
+// Query: {  "profile": *[_type == "profile" && _id == "profile"][0]{  name,  headline,  photo {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  bio,  email,  location,  contactNote},  "siteSettings": *[_type == "siteSettings" && _id == "siteSettings"][0]{  scoreboardName,  seoTitle,  seoDescription,  ogImage {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  "ambientTrack": ambientTrack {  "url": asset->url,  "filename": asset->originalFilename,  "size": asset->size}}}
+export type START_QUERY_RESULT = {
+  profile: {
+    name: string;
+    headline: string | null;
+    photo: {
+      _type: "imageWithAlt";
+      asset: SanityImageAssetReference | null;
+      crop: SanityImageCrop | null;
+      hotspot: SanityImageHotspot | null;
+      alt: string;
+      width: number | null;
+      height: number | null;
+      lqip: string | null;
+    } | null;
+    bio: PortableText | null;
+    email: string | null;
+    location: string | null;
+    contactNote: string | null;
+  } | null;
+  siteSettings: {
+    scoreboardName: string | null;
+    seoTitle: string | null;
+    seoDescription: string | null;
+    ogImage: {
+      _type: "image";
+      asset: SanityImageAssetReference | null;
+      crop: SanityImageCrop | null;
+      hotspot: SanityImageHotspot | null;
+      alt: null;
+      width: number | null;
+      height: number | null;
+      lqip: string | null;
+    } | null;
+    ambientTrack: {
+      url: string | null;
+      filename: string | null;
+      size: number | null;
+    } | null;
+  } | null;
+};
+
+// Source: src/sanity/queries.ts
+// Variable: ABOUT_PAGE_QUERY
+// Query: {  "about": *[_type == "siteAbout" && _id == "siteAbout"][0]{  heading,  body},  "profile": *[_type == "profile" && _id == "profile"][0]{  name,  headline,  photo {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  bio,  email,  location,  contactNote},  "siteSettings": *[_type == "siteSettings" && _id == "siteSettings"][0]{  scoreboardName,  seoTitle,  seoDescription,  ogImage {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  "ambientTrack": ambientTrack {  "url": asset->url,  "filename": asset->originalFilename,  "size": asset->size}}}
+export type ABOUT_PAGE_QUERY_RESULT = {
+  about: {
+    heading: string;
+    body: PortableText | null;
+  } | null;
+  profile: {
+    name: string;
+    headline: string | null;
+    photo: {
+      _type: "imageWithAlt";
+      asset: SanityImageAssetReference | null;
+      crop: SanityImageCrop | null;
+      hotspot: SanityImageHotspot | null;
+      alt: string;
+      width: number | null;
+      height: number | null;
+      lqip: string | null;
+    } | null;
+    bio: PortableText | null;
+    email: string | null;
+    location: string | null;
+    contactNote: string | null;
+  } | null;
+  siteSettings: {
+    scoreboardName: string | null;
+    seoTitle: string | null;
+    seoDescription: string | null;
+    ogImage: {
+      _type: "image";
+      asset: SanityImageAssetReference | null;
+      crop: SanityImageCrop | null;
+      hotspot: SanityImageHotspot | null;
+      alt: null;
+      width: number | null;
+      height: number | null;
+      lqip: string | null;
+    } | null;
+    ambientTrack: {
+      url: string | null;
+      filename: string | null;
+      size: number | null;
+    } | null;
+  } | null;
+};
+
+// Source: src/sanity/queries.ts
 // Variable: PRESS_QUERY
 // Query: {  "profile": *[_type == "profile" && _id == "profile"][0]{  name,  headline,  photo {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  bio,  email,  location,  contactNote},  "projects": *[_type == "project" && defined(slug.current)] | order(orderRank asc){  _id,  title,  "slug": slug.current,  blurb,  description,  images[] {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  role,  stack,  links[]{ _key, label, url },  featured},  "experience": *[_type == "experience"] | order(startDate desc, orderRank asc){  _id,  company,  role,  startDate,  endDate,  location,  summary,  logo {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip}},  "education": *[_type == "education"] | order(orderRank asc){  _id,  school,  degree,  field,  startDate,  endDate,  honors,  publications[]{ _key, title, venue, url },  logo {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip}},  "skillGroups": *[_type == "skillGroup"] | order(orderRank asc){  _id,  label,  items},  "places": *[_type == "place"] | order(orderRank asc){  _id,  city,  region,  years,  photo {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  note},  "links": *[_type == "links" && _id == "links"][0]{  github,  linkedin,  otherLinks[]{ _key, label, url },  resume {  "url": asset->url,  "filename": asset->originalFilename,  "size": asset->size}},  "accomplishments": *[_type == "accomplishment"] | order(orderRank asc){  _id,  title,  organization,  date,  description,  url},  "siteSettings": *[_type == "siteSettings" && _id == "siteSettings"][0]{  scoreboardName,  seoTitle,  seoDescription,  ogImage {  _type,  asset,  crop,  hotspot,  alt,  "width": asset->metadata.dimensions.width,  "height": asset->metadata.dimensions.height,  "lqip": asset->metadata.lqip},  "ambientTrack": ambientTrack {  "url": asset->url,  "filename": asset->originalFilename,  "size": asset->size}}}
 export type PRESS_QUERY_RESULT = {
@@ -727,6 +838,9 @@ declare global {
     '*[_type == "links" && _id == "links"][0]{\n  github,\n  linkedin,\n  otherLinks[]{ _key, label, url },\n  resume {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n}\n}': LINKS_QUERY_RESULT;
     '*[_type == "accomplishment"] | order(orderRank asc){\n  _id,\n  title,\n  organization,\n  date,\n  description,\n  url\n}': ACCOMPLISHMENTS_QUERY_RESULT;
     '*[_type == "siteSettings" && _id == "siteSettings"][0]{\n  scoreboardName,\n  seoTitle,\n  seoDescription,\n  ogImage {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  "ambientTrack": ambientTrack {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n}\n}': SITE_SETTINGS_QUERY_RESULT;
+    '*[_type == "siteAbout" && _id == "siteAbout"][0]{\n  heading,\n  body\n}': SITE_ABOUT_QUERY_RESULT;
+    '{\n  "profile": *[_type == "profile" && _id == "profile"][0]{\n  name,\n  headline,\n  photo {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  bio,\n  email,\n  location,\n  contactNote\n},\n  "siteSettings": *[_type == "siteSettings" && _id == "siteSettings"][0]{\n  scoreboardName,\n  seoTitle,\n  seoDescription,\n  ogImage {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  "ambientTrack": ambientTrack {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n}\n}\n}': START_QUERY_RESULT;
+    '{\n  "about": *[_type == "siteAbout" && _id == "siteAbout"][0]{\n  heading,\n  body\n},\n  "profile": *[_type == "profile" && _id == "profile"][0]{\n  name,\n  headline,\n  photo {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  bio,\n  email,\n  location,\n  contactNote\n},\n  "siteSettings": *[_type == "siteSettings" && _id == "siteSettings"][0]{\n  scoreboardName,\n  seoTitle,\n  seoDescription,\n  ogImage {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  "ambientTrack": ambientTrack {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n}\n}\n}': ABOUT_PAGE_QUERY_RESULT;
     '{\n  "profile": *[_type == "profile" && _id == "profile"][0]{\n  name,\n  headline,\n  photo {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  bio,\n  email,\n  location,\n  contactNote\n},\n  "projects": *[_type == "project" && defined(slug.current)] | order(orderRank asc){\n  _id,\n  title,\n  "slug": slug.current,\n  blurb,\n  description,\n  images[] {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  role,\n  stack,\n  links[]{ _key, label, url },\n  featured\n},\n  "experience": *[_type == "experience"] | order(startDate desc, orderRank asc){\n  _id,\n  company,\n  role,\n  startDate,\n  endDate,\n  location,\n  summary,\n  logo {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n}\n},\n  "education": *[_type == "education"] | order(orderRank asc){\n  _id,\n  school,\n  degree,\n  field,\n  startDate,\n  endDate,\n  honors,\n  publications[]{ _key, title, venue, url },\n  logo {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n}\n},\n  "skillGroups": *[_type == "skillGroup"] | order(orderRank asc){\n  _id,\n  label,\n  items\n},\n  "places": *[_type == "place"] | order(orderRank asc){\n  _id,\n  city,\n  region,\n  years,\n  photo {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  note\n},\n  "links": *[_type == "links" && _id == "links"][0]{\n  github,\n  linkedin,\n  otherLinks[]{ _key, label, url },\n  resume {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n}\n},\n  "accomplishments": *[_type == "accomplishment"] | order(orderRank asc){\n  _id,\n  title,\n  organization,\n  date,\n  description,\n  url\n},\n  "siteSettings": *[_type == "siteSettings" && _id == "siteSettings"][0]{\n  scoreboardName,\n  seoTitle,\n  seoDescription,\n  ogImage {\n  _type,\n  asset,\n  crop,\n  hotspot,\n  alt,\n  "width": asset->metadata.dimensions.width,\n  "height": asset->metadata.dimensions.height,\n  "lqip": asset->metadata.lqip\n},\n  "ambientTrack": ambientTrack {\n  "url": asset->url,\n  "filename": asset->originalFilename,\n  "size": asset->size\n}\n}\n}': PRESS_QUERY_RESULT;
   }
 }

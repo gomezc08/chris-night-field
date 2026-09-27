@@ -10,6 +10,7 @@ import { place } from "./place";
 import { portableText } from "./portableText";
 import { profile } from "./profile";
 import { project } from "./project";
+import { siteAbout } from "./siteAbout";
 import { siteSettings } from "./siteSettings";
 import { skillGroup } from "./skillGroup";
 
@@ -21,6 +22,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   // Singletons
   profile,
   links,
+  siteAbout,
   siteSettings,
   // Lists
   project,
@@ -31,4 +33,4 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   accomplishment,
 ];
 
-export const singletonTypes = new Set(["profile", "links", "siteSettings"]);
+export const singletonTypes = new Set(["profile", "links", "siteAbout", "siteSettings"]);

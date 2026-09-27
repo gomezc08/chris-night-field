@@ -6,7 +6,16 @@ A personal portfolio as a 2D night soccer field.
 
 ## Overview
 
-The site opens on a black loading screen (a spinning ball counting to 100%) and a START button. Then it becomes a full-window night soccer field under floodlights. It starts pitch black, the floodlight towers click on one at a time, and a lone player juggles at the center circle. Eight objects around the field are the navigation. Clicking one sends the player over to do something, then opens a frosted panel with that section:
+The site has four pages, each with a back button:
+
+| Page | What it is |
+|---|---|
+| `/` | Start screen: a spinning ball counts to 100% (once per visit), then **Start** and **About**. |
+| `/about` | Chris's own words about himself and the site, written in Studio. |
+| `/field` | The scene: a full-window night soccer field. |
+| `/press` | The press box, reached from the round profile button on every page. |
+
+On the field, it starts pitch black, the floodlight towers click on one at a time, and a lone player juggles at the center circle. Eight objects around the field are the navigation. Clicking one sends the player over to do something, then opens a frosted panel with that section:
 
 | Spot | Section |
 |---|---|
@@ -26,7 +35,7 @@ Between visits to the spots, the player juggles and wanders over to the water bo
 It also works for everyone:
 
 - **Keyboard and screen readers:** every spot is a labelled button ("Projects: home goal"), and panels take and return focus.
-- **Phones:** under 700px the lit field is a hero with every spot outlined, section chips below it, bottom-sheet panels, and a prominent link to `/press`.
+- **Phones:** under 700px the lit field is a hero with every spot outlined, section chips below it, bottom-sheet panels, and the profile button to `/press` in the corner.
 
 ## Stack
 
@@ -89,6 +98,7 @@ Go to `/studio` on the live site (or locally) and log in with your Sanity accoun
 | **Places I've lived** | City cards with photo, years, and a short note. Drag to reorder. |
 | **Links** | GitHub, LinkedIn, other links, and the resume PDF. Uploading a new PDF changes what "Download resume" serves. |
 | **Accomplishments** | Awards, wins, and highlights: title, organization or event, date, a short description, and an optional link. Drag to reorder. |
+| **About (start screen)** | The heading and long-form story on `/about`. |
 | **Site settings** | Scoreboard name, SEO title and description, share image, and ambient track. |
 
 Hit **Publish** and the live site updates within a few seconds. No redeploy needed.
@@ -102,7 +112,7 @@ Hit **Publish** and the live site updates within a few seconds. No redeploy need
    - **URL:** `https://your-site.vercel.app/api/revalidate`
    - **Dataset:** `production`
    - **Trigger on:** Create, Update, Delete
-   - **Filter:** `_type in ["profile", "project", "experience", "education", "skillGroup", "place", "links", "accomplishment", "siteSettings"]`
+   - **Filter:** `_type in ["profile", "project", "experience", "education", "skillGroup", "place", "links", "accomplishment", "siteAbout", "siteSettings"]`
    - **Projection:** `{_type}`
    - **HTTP method:** POST
    - **Secret:** the same value as `SANITY_REVALIDATE_SECRET`
@@ -114,7 +124,9 @@ Hit **Publish** and the live site updates within a few seconds. No redeploy need
 ```
 src/
   app/
-    page.tsx                  /  the night field (fetches content, maps spots to panels)
+    page.tsx                  /  the start screen (loader, Start, About)
+    about/page.tsx            /about, long-form About from Studio
+    field/page.tsx            /field, the night field (fetches content, maps spots to panels)
     press/page.tsx            /press, the press box
     studio/[[...tool]]/       /studio, embedded Sanity Studio
     api/revalidate/route.ts   Sanity webhook → revalidateTag
@@ -126,7 +138,8 @@ src/
     sound.ts                  Howler soundboard, driven by the scene's sound cues
   components/
     field/                    React host for the scene: canvas, tooltip, controls, panel shell
-    start/                    Loading and START screen shown before the field
+    start/                    Loading, Start, and About screen
+    nav/                      Round back and profile buttons shared by every page
     panels/                   The eight panel layouts (content from Sanity)
     press/                    Press box sections and styles
     SanityImage.tsx           next/image backed by Sanity's CDN

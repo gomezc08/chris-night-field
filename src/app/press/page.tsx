@@ -13,6 +13,7 @@ import {
   Skills,
 } from "@/components/press/sections";
 import styles from "@/components/press/press.module.css";
+import { BackButton } from "@/components/nav/NavButtons";
 import { SanityImage } from "@/components/SanityImage";
 import { siteMetadata } from "@/lib/metadata";
 import { sanityFetch } from "@/sanity/lib/fetch";
@@ -48,6 +49,9 @@ export default async function PressPage() {
       <a href="#main" className={styles.skip}>
         Skip to content
       </a>
+      <div className={styles.back}>
+        <BackButton href="/field" label="Back to the field" inline />
+      </div>
       <header className={styles.header}>
         {profile?.photo && (
           <SanityImage
@@ -86,7 +90,7 @@ export default async function PressPage() {
       </main>
 
       <footer className={styles.footer}>
-        <Link href="/">Back to the field</Link>
+        <Link href="/field">Back to the field</Link>
       </footer>
     </div>
   );

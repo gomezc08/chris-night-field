@@ -203,6 +203,14 @@ async function main() {
       orderRank: "0|100000:",
     },
     {
+      _id: "siteAbout",
+      _type: "siteAbout",
+      heading: "About",
+      body: [
+        para("Your story in your own words. Replace this in Studio under About (start screen)."),
+      ],
+    },
+    {
       _id: "siteSettings",
       _type: "siteSettings",
       scoreboardName: "GOMEZ FC",

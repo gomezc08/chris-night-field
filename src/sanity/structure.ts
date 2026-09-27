@@ -1,6 +1,7 @@
 import { BookIcon } from "@sanity/icons/Book";
 import { CaseIcon } from "@sanity/icons/Case";
 import { CogIcon } from "@sanity/icons/Cog";
+import { InfoOutlineIcon } from "@sanity/icons/InfoOutline";
 import { LinkIcon } from "@sanity/icons/Link";
 import { PinIcon } from "@sanity/icons/Pin";
 import { ProjectsIcon } from "@sanity/icons/Projects";
@@ -34,6 +35,7 @@ export const structure: StructureResolver = (S, context) => {
       singleton("links", "Links", LinkIcon),
       orderable("accomplishment", "Accomplishments", StarIcon),
       S.divider(),
+      singleton("siteAbout", "About (start screen)", InfoOutlineIcon),
       singleton("siteSettings", "Site settings", CogIcon),
     ]);
 };
