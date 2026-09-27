@@ -16,6 +16,33 @@
   touch-action: manipulation;
 }
 
+/* Invisible buttons over each spot's hit region: keyboard focus, screen readers, and taps. */
+.spots {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.spot {
+  position: absolute;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Fingers are bigger than cursors: extend small spots' tap area without moving them. */
+@media (pointer: coarse) {
+  .spot::after {
+    content: "";
+    position: absolute;
+    inset: -10px;
+  }
+}
+
 .tip {
   position: absolute;
   pointer-events: none;
@@ -123,4 +150,70 @@
 .stage :focus-visible {
   outline: 2px solid #ffb547;
   outline-offset: 2px;
+}
+
+/* The panel takes focus programmatically when it opens; its own outline would just be noise. */
+.panel:focus {
+  outline: none;
+}
+
+/* Phones: the field is a hero image and panels slide up as bottom sheets. */
+@media (max-width: 700px) {
+  .stage {
+    border-radius: 8px;
+  }
+
+  .panel {
+    position: fixed;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    max-height: 75dvh;
+    background: rgba(8, 12, 18, 0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-width: 1px 0 0;
+    border-radius: 14px 14px 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+    transform: translateY(24px);
+    z-index: 10;
+  }
+
+  .panelOpen {
+    transform: none;
+  }
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.chips button {
+  padding: 8px 12px;
+  background: rgba(8, 12, 18, 0.7);
+  color: #e8edf2;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  font: inherit;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.chips button[aria-pressed="true"] {
+  border-color: #ffb547;
+  color: #ffb547;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .tip {
+    transition: none;
+    transform: none;
+  }
 }
