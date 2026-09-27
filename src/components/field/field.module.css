@@ -129,12 +129,59 @@
   overscroll-behavior: contain;
 }
 
+/* Scene-only controls sit just right of the site-wide music button (bottom-left corner). */
 .controls {
   position: absolute;
-  left: 20px;
-  bottom: 20px;
+  left: 76px;
+  bottom: calc(20px + env(safe-area-inset-bottom));
   display: flex;
   gap: 10px;
+}
+
+/* First-visit hint: handwritten text and a bobbing arrow pointing down at the eye button. */
+.hint {
+  position: absolute;
+  left: 60px;
+  bottom: 74px;
+  z-index: 6;
+  color: #fff4dc;
+  font-size: 30px;
+  line-height: 1.05;
+  text-shadow: 0 0 18px rgba(255, 220, 160, 0.45);
+  pointer-events: none;
+  animation: hint-in 0.8s ease both;
+}
+
+.hint p {
+  margin: 0;
+}
+
+.hintArrow {
+  display: block;
+  width: 44px;
+  height: 66px;
+  /* Tip lands over the eye button's center (76px + 23px from the left edge). */
+  margin: 6px 0 0 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 8px rgba(255, 220, 160, 0.5));
+  animation: hint-bob 1s ease-in-out infinite alternate;
+}
+
+@keyframes hint-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes hint-bob {
+  to {
+    transform: translateY(8px);
+  }
 }
 
 /* Round frosted icon buttons; the icon itself shows the state (a red slash means off). */
@@ -208,7 +255,7 @@
   }
 
   .controls {
-    left: 16px;
+    left: 72px;
     bottom: calc(16px + env(safe-area-inset-bottom));
   }
 }

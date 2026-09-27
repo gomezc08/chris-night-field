@@ -1,20 +1,19 @@
 "use client";
 
+import { Amatic_SC } from "next/font/google";
 import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 
 import { H, SPOTS, type SpotKey, W } from "@/scene/constants";
 import { createNightField, type NightField as Engine } from "@/scene/engine";
 import { type Fit, fitDesign } from "@/scene/layout";
-import { createSoundboard, type Soundboard } from "@/scene/sound";
+import { useSound } from "@/components/sound/SoundProvider";
 
 import styles from "./field.module.css";
-import { EyeIcon, MusicIcon } from "./icons";
+import { EyeIcon } from "./icons";
 import { useMediaQuery } from "./useMediaQuery";
 
 type Props = {
   scoreboardName: string;
-  /** Chris's ambient track from Site settings. */
-  ambientTrackUrl?: string | null;
   /** Rendered panel content for each spot. The scene never sees the data behind it. */
   panels: Record<SpotKey, ReactNode>;
 };
@@ -35,12 +34,33 @@ const TAB_ORDER: SpotKey[] = [
 
 const MOBILE = "(max-width: 700px)";
 
-export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
+const amatic = Amatic_SC({ weight: ["700"], subsets: ["latin"] });
+
+/** The "where do I click?" hint waits for the floodlights, then shows once per session. */
+const HINT_DELAY_MS = 3500;
+const HINT_KEY = "night-field:hint-seen";
+
+function hintSeen() {
+  try {
+    return sessionStorage.getItem(HINT_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function markHintSeen() {
+  try {
+    sessionStorage.setItem(HINT_KEY, "1");
+  } catch {
+    // Storage blocked: the hint may show again next visit.
+  }
+}
+
+export function NightField({ scoreboardName, panels }: Props) {
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const panelRef = useRef<HTMLElement>(null);
   const engineRef = useRef<Engine | null>(null);
-  const soundRef = useRef<Soundboard | null>(null);
   const spotRefs = useRef<Partial<Record<SpotKey, HTMLButtonElement | null>>>({});
   /** The spot whose button should get focus back when the panel closes. */
   const returnFocusTo = useRef<SpotKey | null>(null);
@@ -50,7 +70,8 @@ export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
   const [shown, setShown] = useState<SpotKey | null>(null);
   const [showAllPref, setShowAll] = useState(false);
   const [tip, setTip] = useState<Tip | null>(null);
-  const [muted, setMuted] = useState(true);
+  const [hint, setHint] = useState(false);
+  const { play } = useSound();
   // Where the design sits in the full-window stage; spot buttons and chips follow it.
   const [fit, setFit] = useState<Fit>(() => fitDesign(W, H));
 
@@ -66,16 +87,17 @@ export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
     return () => observer.disconnect();
   }, []);
 
+  // First visit this session: once the floodlights are up, point at the eye button.
   useEffect(() => {
-    const sound = createSoundboard(ambientTrackUrl);
-    soundRef.current = sound;
-    return () => {
-      sound.destroy();
-      soundRef.current = null;
-    };
-    // The soundboard is created once.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (window.matchMedia(MOBILE).matches || hintSeen()) return;
+    const timer = setTimeout(() => setHint(true), HINT_DELAY_MS);
+    return () => clearTimeout(timer);
   }, []);
+
+  function dismissHint() {
+    setHint(false);
+    markHintSeen();
+  }
 
   useEffect(() => {
     const engine = createNightField(canvasRef.current!, {
@@ -87,7 +109,7 @@ export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
         setShown(key);
       },
       onHide: () => setActive(null),
-      onSound: (cue) => soundRef.current?.play(cue),
+      onSound: play,
     });
     engineRef.current = engine;
     return () => {
@@ -99,7 +121,6 @@ export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
   }, []);
 
   useEffect(() => engineRef.current?.setScoreboardName(scoreboardName), [scoreboardName]);
-  useEffect(() => soundRef.current?.setMuted(muted), [muted]);
   // Canvas labels would be ~4px tall on a phone, so there the chips below the field name the spots.
   useEffect(() => engineRef.current?.setShowAll(showAll, !isMobile), [showAll, isMobile]);
 
@@ -123,6 +144,7 @@ export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
   }, [close]);
 
   function select(key: SpotKey) {
+    dismissHint();
     returnFocusTo.current = key;
     engineRef.current?.select(key);
   }
@@ -253,7 +275,10 @@ export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
             <button
               type="button"
               className={styles.iconButton}
-              onClick={() => setShowAll((v) => !v)}
+              onClick={() => {
+                dismissHint();
+                setShowAll((v) => !v);
+              }}
               aria-pressed={showAllPref}
               aria-label="Show all spots"
               title={showAllPref ? "Hide spots" : "Show all spots"}
@@ -261,17 +286,18 @@ export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
               <EyeIcon off={!showAllPref} />
             </button>
           )}
-          <button
-            type="button"
-            className={styles.iconButton}
-            onClick={() => setMuted((m) => !m)}
-            aria-pressed={!muted}
-            aria-label="Music"
-            title={muted ? "Turn music on" : "Turn music off"}
-          >
-            <MusicIcon off={muted} />
-          </button>
         </div>
+
+        {hint && !isMobile && (
+          <div className={`${styles.hint} ${amatic.className}`} role="note">
+            <p>Not sure where to start?</p>
+            <p>Tap here to see every spot</p>
+            <svg className={styles.hintArrow} viewBox="0 0 60 90" aria-hidden>
+              <path d="M30 4 C 12 30, 44 52, 30 80" />
+              <path d="M18 68 L30 82 L42 68" />
+            </svg>
+          </div>
+        )}
 
         {isMobile && (
           <nav

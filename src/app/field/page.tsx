@@ -47,7 +47,6 @@ export default async function FieldPage() {
       <h1 className="sr-only">{data.profile?.name ?? "Portfolio"}</h1>
       <NightField
         scoreboardName={data.siteSettings?.scoreboardName ?? "GOMEZ FC"}
-        ambientTrackUrl={data.siteSettings?.ambientTrack?.url}
         panels={panels}
       />
       <BackButton href="/" label="Back to the start screen" />
