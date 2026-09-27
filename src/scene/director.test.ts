@@ -5,6 +5,7 @@ import { CENTER, SPOT_KEYS, type SpotKey } from "./constants";
 import { createDirector } from "./director";
 import type { PlayerState } from "./player/types";
 import { createSceneState } from "./state";
+import { createTeammate } from "./teammate";
 
 const DT = 1 / 60;
 
@@ -12,11 +13,15 @@ function world() {
   const state = createSceneState();
   const player: PlayerState = { x: CENTER[0], y: CENTER[1], facing: 1, pose: "juggle" };
   const ball = createBall();
+  const teammate = createTeammate();
   const panel = { key: null as SpotKey | null };
-  const director = createDirector(state, player, ball, {
-    onOpen: (k) => (panel.key = k),
-    onHide: () => (panel.key = null),
-  });
+  const director = createDirector(
+    state,
+    player,
+    ball,
+    { onOpen: (k) => (panel.key = k), onHide: () => (panel.key = null) },
+    teammate,
+  );
   let t = 0;
   const tick = (frames = 1, lightTime = 0) => {
     for (let i = 0; i < frames; i++) {
@@ -33,7 +38,7 @@ function world() {
     }
     return frames * DT;
   };
-  return { state, player, ball, panel, director, tick, until };
+  return { state, player, ball, teammate, panel, director, tick, until };
 }
 
 type World = ReturnType<typeof world>;
@@ -50,6 +55,8 @@ function expectIdle(w: World) {
   expect(w.ball.mode).toBe("juggle");
   expect([w.player.x, w.player.y]).toEqual([...CENTER]);
   expect(w.panel.key).toBeNull();
+  // The corner-kick teammate is long gone by the time Chris is back juggling.
+  expect(w.teammate.visible).toBe(false);
 }
 
 function expectOpen(w: World, key: SpotKey) {
@@ -61,9 +68,9 @@ function expectOpen(w: World, key: SpotKey) {
     ballInBag: key === "ballbag",
     active: key,
   });
-  // The corner-flag cross is still coming down when the panel opens, as in the prototype.
-  const ballModes = key === "ballbag" ? ["hidden"] : key === "flag" ? ["rest", "fly"] : ["rest"];
-  expect(ballModes).toContain(w.ball.mode);
+  expect(w.ball.mode).toBe(key === "ballbag" ? "hidden" : "rest");
+  // Only the corner kick brings on the teammate, and he stays while its panel is open.
+  if (key === "flag") expect(w.teammate).toMatchObject({ visible: true, alpha: 1 });
   expect(w.panel.key).toBe(key);
 }
 
@@ -86,7 +93,8 @@ describe("director", () => {
     w.until(() => w.director.phase === "open");
     expectOpen(w, key);
     expect(w.player.pose).toBe(FINAL_POSE[key]);
-    expect(w.state.homeScore).toBe(key === "goalR" || key === "goalL" ? 1 : 0);
+    // Both goals score, and so does the corner (headed in by the teammate).
+    expect(w.state.homeScore).toBe(["goalR", "goalL", "flag"].includes(key) ? 1 : 0);
 
     expect(w.director.close()).toBe(true);
     expect(w.panel.key).toBeNull(); // panel hides as the close routine starts

@@ -23,6 +23,7 @@ import { stickFigure } from "./player/stickFigure";
 import type { PlayerRenderer, PlayerState } from "./player/types";
 import { type Bounds, fitDesign, visibleBounds } from "./layout";
 import { createSceneState, type SceneState } from "./state";
+import { createTeammate } from "./teammate";
 
 /** Things worth a sound. The scene only reports them; playing audio is someone else's job. */
 export type SceneSound =
@@ -50,6 +51,9 @@ export type NightField = {
   destroy: () => void;
 };
 
+/** The corner-kick teammate wears light blue so he reads as someone else. */
+const TEAMMATE_TINT = "#9fd4ff";
+
 /** Seconds of lightTime at which every tower is fully on. */
 const LIT = INTRO_FIRST_TOWER + TOWERS.length * INTRO_TOWER_GAP + INTRO_RAMP;
 const DRIBBLE_TOUCH_EVERY = 0.33;
@@ -72,10 +76,14 @@ export function createNightField(
 
   const player: PlayerState = { x: CENTER[0], y: CENTER[1], facing: 1, pose: "juggle" };
   const ball = createBall();
-  const director = createDirector(state, player, ball, {
-    onOpen: (key) => options.onOpen(key),
-    onHide: () => options.onHide(),
-  });
+  const teammate = createTeammate();
+  const director = createDirector(
+    state,
+    player,
+    ball,
+    { onOpen: (key) => options.onOpen(key), onHide: () => options.onHide() },
+    teammate,
+  );
 
   // Cached static layer, redrawn whenever its size is out of date.
   const staticLayer = document.createElement("canvas");
@@ -201,9 +209,28 @@ export function createNightField(
     applyTransform(ctx);
     drawDynamic(ctx, state, t);
     if (player.pose !== "sit") drawLongShadows(ctx, player.x, player.y, 30, towers);
+    if (teammate.visible) {
+      const faded = towers.map((v) => v * teammate.alpha);
+      drawLongShadows(ctx, teammate.x, teammate.y, 30, faded);
+    }
     if (ball.mode !== "hidden") drawLongShadows(ctx, ball.x, ballGroundY(ball, player), 5, towers);
     drawBall(ctx, ball, player);
-    renderPlayer.draw(ctx, { ...player, hasBag: state.bagOnBack }, t);
+
+    // Whoever is further up the pitch is drawn first, so the nearer figure overlaps.
+    const drawChris = () => renderPlayer.draw(ctx, { ...player, hasBag: state.bagOnBack }, t);
+    const drawTeammate = () => {
+      if (!teammate.visible) return;
+      ctx.globalAlpha = teammate.alpha;
+      renderPlayer.draw(ctx, { ...teammate, hasBag: false, tint: TEAMMATE_TINT }, t);
+      ctx.globalAlpha = 1;
+    };
+    if (teammate.y < player.y) {
+      drawTeammate();
+      drawChris();
+    } else {
+      drawChris();
+      drawTeammate();
+    }
 
     drawLighting(ctx, scenery, state, scoreboardName, { towers, level, t, dt, bounds });
     drawSpotOutlines(ctx, state);
