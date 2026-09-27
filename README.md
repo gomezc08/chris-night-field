@@ -10,14 +10,14 @@ The site opens on a black loading screen (a spinning ball counting to 100%) and 
 
 | Spot | Section |
 |---|---|
-| Bag on the bench | About me |
+| Bleachers | About me |
 | Home goal | Projects |
 | Away goal | Links (and resume) |
 | Scoreboard | Experience |
 | Tactics board | Education |
 | Corner flag | Places I've lived |
 | Ball bag | Skills and stack |
-| Bleachers | Credits |
+| Bag on the bench | Credits |
 
 [`/press`](http://localhost:3000/press) is the "press box": every section on one fast, plain page for recruiters, SEO, and mobile.
 
