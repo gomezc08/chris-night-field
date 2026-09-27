@@ -23,5 +23,11 @@ export const skillGroup = defineType({
     }),
     orderRankField({ type: "skillGroup" }),
   ],
-  preview: { select: { title: "label", subtitle: "items" } },
+  preview: {
+    select: { title: "label", items: "items" },
+    prepare: ({ title, items }: { title?: string; items?: string[] }) => ({
+      title,
+      subtitle: items?.join(", "),
+    }),
+  },
 });
