@@ -24,7 +24,7 @@ export type Spot = {
 };
 
 export const SPOTS: Record<SpotKey, Spot> = {
-  bag: { section: "Credits", object: "Bag on the bench", rect: [346, 496, 44, 22] },
+  bag: { section: "Accomplishments", object: "Bag on the bench", rect: [346, 496, 44, 22] },
   goalR: { section: "Projects", object: "Home goal", rect: [836, 262, 40, 106] },
   goalL: { section: "Links", object: "Away goal", rect: [24, 262, 40, 106] },
   score: { section: "Experience", object: "Scoreboard", rect: [608, 26, 164, 80] },

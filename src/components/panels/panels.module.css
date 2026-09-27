@@ -99,11 +99,15 @@
   margin-bottom: 4px;
 }
 
+/* Logos show whole at their own shape on a light tile, so wide wordmarks and dark
+   logos both read. No cropping needed in Studio. */
 .logo {
   width: 44px;
   height: 44px;
+  padding: 5px;
   border-radius: 8px;
-  object-fit: cover;
+  background: #f4f6f8;
+  object-fit: contain;
   flex: none;
   margin-top: 2px;
 }
@@ -256,35 +260,4 @@
 .pager button:disabled {
   opacity: 0.35;
   cursor: default;
-}
-
-/* Credits */
-.credits {
-  text-align: center;
-}
-
-.track {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin: 6px 0;
-}
-
-.play {
-  flex: none;
-  width: 30px;
-  height: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 50%;
-  background: none;
-  color: #e8edf2;
-  font-size: 10px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.play[aria-pressed="true"] {
-  border-color: #ffb547;
-  color: #ffb547;
 }

@@ -1,10 +1,11 @@
 import { BookIcon } from "@sanity/icons/Book";
 import { CaseIcon } from "@sanity/icons/Case";
 import { CogIcon } from "@sanity/icons/Cog";
-import { HeartIcon } from "@sanity/icons/Heart";
+import { InfoOutlineIcon } from "@sanity/icons/InfoOutline";
 import { LinkIcon } from "@sanity/icons/Link";
 import { PinIcon } from "@sanity/icons/Pin";
 import { ProjectsIcon } from "@sanity/icons/Projects";
+import { StarIcon } from "@sanity/icons/Star";
 import { TagsIcon } from "@sanity/icons/Tags";
 import { UserIcon } from "@sanity/icons/User";
 import { orderableDocumentListDeskItem } from "@sanity/orderable-document-list";
@@ -32,8 +33,9 @@ export const structure: StructureResolver = (S, context) => {
       orderable("skillGroup", "Skills and stack", TagsIcon),
       orderable("place", "Places I've lived", PinIcon),
       singleton("links", "Links", LinkIcon),
-      singleton("credits", "Credits", HeartIcon),
+      orderable("accomplishment", "Accomplishments", StarIcon),
       S.divider(),
+      singleton("siteAbout", "About (start screen)", InfoOutlineIcon),
       singleton("siteSettings", "Site settings", CogIcon),
     ]);
 };

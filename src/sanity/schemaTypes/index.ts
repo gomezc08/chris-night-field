@@ -1,6 +1,6 @@
 import type { SchemaTypeDefinition } from "sanity";
 
-import { credits } from "./credits";
+import { accomplishment } from "./accomplishment";
 import { education } from "./education";
 import { experience } from "./experience";
 import { imageWithAlt } from "./imageWithAlt";
@@ -10,6 +10,7 @@ import { place } from "./place";
 import { portableText } from "./portableText";
 import { profile } from "./profile";
 import { project } from "./project";
+import { siteAbout } from "./siteAbout";
 import { siteSettings } from "./siteSettings";
 import { skillGroup } from "./skillGroup";
 
@@ -21,7 +22,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   // Singletons
   profile,
   links,
-  credits,
+  siteAbout,
   siteSettings,
   // Lists
   project,
@@ -29,6 +30,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   education,
   place,
   skillGroup,
+  accomplishment,
 ];
 
-export const singletonTypes = new Set(["profile", "links", "credits", "siteSettings"]);
+export const singletonTypes = new Set(["profile", "links", "siteAbout", "siteSettings"]);

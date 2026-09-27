@@ -17,7 +17,7 @@ export const SECTIONS = [
   { id: "skills", title: "Skills and stack" },
   { id: "places", title: "Places I've lived" },
   { id: "links", title: "Links" },
-  { id: "credits", title: "Credits" },
+  { id: "accomplishments", title: "Accomplishments" },
 ] as const;
 
 type SectionId = (typeof SECTIONS)[number]["id"];
@@ -133,7 +133,7 @@ export function Experience({ experience }: { experience: Press["experience"] }) 
           <li key={e._id} className={styles.entry}>
             <div className={styles.entryHead}>
               {e.logo && (
-                <SanityImage image={e.logo} width={40} aspect={1} className={styles.logo} />
+                <SanityImage image={e.logo} width={80} className={styles.logo} />
               )}
               <div>
                 <h3 className={styles.entryTitle}>
@@ -162,7 +162,7 @@ export function Education({ education }: { education: Press["education"] }) {
           <li key={e._id} className={styles.entry}>
             <div className={styles.entryHead}>
               {e.logo && (
-                <SanityImage image={e.logo} width={40} aspect={1} className={styles.logo} />
+                <SanityImage image={e.logo} width={80} className={styles.logo} />
               )}
               <div>
                 <h3 className={styles.entryTitle}>{e.school}</h3>
@@ -277,37 +277,27 @@ export function Links({ links }: { links: Press["links"] }) {
   );
 }
 
-export function Credits({ credits }: { credits: Press["credits"] }) {
-  if (!credits) return null;
+export function Accomplishments({
+  accomplishments,
+}: {
+  accomplishments: Press["accomplishments"];
+}) {
+  if (!accomplishments.length) return null;
   return (
-    <Section id="credits">
-      {!!credits.tracks?.length && (
-        <>
-          <h3 className={styles.subhead}>Soundtrack</h3>
-          <ul className={styles.plainList}>
-            {credits.tracks.map((t) => (
-              <li key={t._key} className={styles.track}>
-                <span>
-                  {t.url ? <ExternalLink href={t.url}>{t.title}</ExternalLink> : t.title}
-                  {t.artist && <span className={styles.muted}> · {t.artist}</span>}
-                </span>
-                {t.audio?.url && (
-                  <audio controls preload="none" src={t.audio.url}>
-                    <a href={t.audio.url}>Listen to {t.title}</a>
-                  </audio>
-                )}
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-      {!!credits.thanks?.length && (
-        <>
-          <h3 className={styles.subhead}>Thanks</h3>
-          <RichText value={credits.thanks} />
-        </>
-      )}
-      {credits.builtWith && <p className={styles.muted}>Built with {credits.builtWith}</p>}
+    <Section id="accomplishments">
+      <ul className={styles.timeline}>
+        {accomplishments.map((a) => (
+          <li key={a._id} className={styles.entry}>
+            <h3 className={styles.entryTitle}>
+              {a.url ? <ExternalLink href={a.url}>{a.title}</ExternalLink> : a.title}
+            </h3>
+            {(a.organization || a.date) && (
+              <p className={styles.muted}>{[a.organization, a.date].filter(Boolean).join(" · ")}</p>
+            )}
+            {a.description && <p>{a.description}</p>}
+          </li>
+        ))}
+      </ul>
     </Section>
   );
 }

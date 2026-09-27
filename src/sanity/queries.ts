@@ -86,10 +86,13 @@ const LINKS = /* groq */ `*[_type == "links" && _id == "links"][0]{
   resume ${FILE}
 }`;
 
-const CREDITS = /* groq */ `*[_type == "credits" && _id == "credits"][0]{
-  tracks[]{ _key, title, artist, url, "audio": audioFile ${FILE} },
-  thanks,
-  builtWith
+const ACCOMPLISHMENTS = /* groq */ `*[_type == "accomplishment"] | order(orderRank asc){
+  _id,
+  title,
+  organization,
+  date,
+  description,
+  url
 }`;
 
 const SITE_SETTINGS = /* groq */ `*[_type == "siteSettings" && _id == "siteSettings"][0]{
@@ -100,6 +103,11 @@ const SITE_SETTINGS = /* groq */ `*[_type == "siteSettings" && _id == "siteSetti
   "ambientTrack": ambientTrack ${FILE}
 }`;
 
+const SITE_ABOUT = /* groq */ `*[_type == "siteAbout" && _id == "siteAbout"][0]{
+  heading,
+  body
+}`;
+
 // One query per section, for pages that only need part of the content.
 export const PROFILE_QUERY = defineQuery(PROFILE);
 export const PROJECTS_QUERY = defineQuery(PROJECTS);
@@ -108,8 +116,21 @@ export const EDUCATION_QUERY = defineQuery(EDUCATION);
 export const SKILL_GROUPS_QUERY = defineQuery(SKILL_GROUPS);
 export const PLACES_QUERY = defineQuery(PLACES);
 export const LINKS_QUERY = defineQuery(LINKS);
-export const CREDITS_QUERY = defineQuery(CREDITS);
+export const ACCOMPLISHMENTS_QUERY = defineQuery(ACCOMPLISHMENTS);
 export const SITE_SETTINGS_QUERY = defineQuery(SITE_SETTINGS);
+export const SITE_ABOUT_QUERY = defineQuery(SITE_ABOUT);
+
+// What the start screen needs: the photo for the profile button, plus metadata.
+export const START_QUERY = defineQuery(`{
+  "profile": ${PROFILE},
+  "siteSettings": ${SITE_SETTINGS}
+}`);
+
+export const ABOUT_PAGE_QUERY = defineQuery(`{
+  "about": ${SITE_ABOUT},
+  "profile": ${PROFILE},
+  "siteSettings": ${SITE_SETTINGS}
+}`);
 
 // Every section in one round trip. Used by /press and the scene at /.
 export const PRESS_QUERY = defineQuery(`{
@@ -120,7 +141,7 @@ export const PRESS_QUERY = defineQuery(`{
   "skillGroups": ${SKILL_GROUPS},
   "places": ${PLACES},
   "links": ${LINKS},
-  "credits": ${CREDITS},
+  "accomplishments": ${ACCOMPLISHMENTS},
   "siteSettings": ${SITE_SETTINGS}
 }`);
 
@@ -133,6 +154,7 @@ export const CONTENT_TAGS = [
   "skillGroup",
   "place",
   "links",
-  "credits",
+  "accomplishment",
+  "siteAbout",
   "siteSettings",
 ];

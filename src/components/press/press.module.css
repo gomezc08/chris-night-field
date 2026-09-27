@@ -50,6 +50,10 @@
   z-index: 10;
 }
 
+.back {
+  margin-bottom: 1.5rem;
+}
+
 .header {
   display: flex;
   gap: 1.25rem;
@@ -248,11 +252,14 @@
   align-items: flex-start;
 }
 
+/* Logos show whole at their own shape on a light tile (see panels.module.css). */
 .logo {
   width: 40px;
   height: 40px;
+  padding: 4px;
   border-radius: 8px;
-  object-fit: cover;
+  background: #f4f6f8;
+  object-fit: contain;
   flex: none;
   margin-top: 0.2rem;
 }
@@ -321,19 +328,6 @@
   color: var(--muted);
 }
 
-.track {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-
-.track audio {
-  height: 2rem;
-  max-width: 100%;
-}
-
 .footer {
   margin-top: 3rem;
   padding-top: 1.25rem;
@@ -357,9 +351,9 @@
   }
 
   .toc,
+  .back,
   .skip,
-  .footer,
-  .track audio {
+  .footer {
     display: none;
   }
 }

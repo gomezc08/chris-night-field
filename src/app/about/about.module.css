@@ -1,0 +1,67 @@
+/* Same black as the start screen, with comfortable long-form reading type. */
+.page {
+  min-height: 100dvh;
+  background: #000;
+  color: #e8edf2;
+  padding: 96px 20px 80px;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.article {
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+.heading {
+  margin: 0 0 1.5rem;
+  font-size: clamp(56px, 9vw, 88px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  text-align: center;
+  color: #f2f2f2;
+}
+
+.body {
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: #d6dde5;
+}
+
+.body p {
+  margin: 0 0 1.1em;
+}
+
+.body h3 {
+  margin: 2em 0 0.6em;
+  font-size: 1.25rem;
+  color: #f2f2f2;
+}
+
+.body ul,
+.body ol {
+  margin: 0 0 1.1em;
+  padding-left: 1.3em;
+}
+
+.body li {
+  margin-bottom: 0.35em;
+}
+
+.body blockquote {
+  margin: 1.5em 0;
+  padding-left: 1em;
+  border-left: 3px solid #ffb547;
+  color: #f2f2f2;
+  font-style: italic;
+}
+
+.body a {
+  color: #ffb547;
+  text-underline-offset: 0.2em;
+}
+
+.empty {
+  text-align: center;
+  color: #8b97a4;
+}
