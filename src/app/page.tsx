@@ -46,7 +46,11 @@ export default async function Home() {
     <main className={styles.main}>
       <h1 className={styles.srOnly}>{data.profile?.name ?? "Portfolio"}</h1>
       <div className={styles.frame}>
-        <NightField scoreboardName={data.siteSettings?.scoreboardName ?? "GOMEZ FC"} panels={panels} />
+        <NightField
+          scoreboardName={data.siteSettings?.scoreboardName ?? "GOMEZ FC"}
+          ambientTrackUrl={data.siteSettings?.ambientTrack?.url}
+          panels={panels}
+        />
         <p className={styles.pressLink}>
           <Link href="/press">Press box: everything on one page →</Link>
         </p>

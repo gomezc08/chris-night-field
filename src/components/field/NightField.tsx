@@ -4,12 +4,15 @@ import { type ReactNode, useCallback, useEffect, useRef, useState } from "react"
 
 import { H, SPOTS, type SpotKey, W } from "@/scene/constants";
 import { createNightField, type NightField as Engine } from "@/scene/engine";
+import { createSoundboard, type Soundboard } from "@/scene/sound";
 
 import styles from "./field.module.css";
 import { useMediaQuery } from "./useMediaQuery";
 
 type Props = {
   scoreboardName: string;
+  /** Chris's ambient track from Site settings. */
+  ambientTrackUrl?: string | null;
   /** Rendered panel content for each spot. The scene never sees the data behind it. */
   panels: Record<SpotKey, ReactNode>;
 };
@@ -33,11 +36,12 @@ const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 
 const pct = (n: number, of: number) => `${(n / of) * 100}%`;
 
-export function NightField({ scoreboardName, panels }: Props) {
+export function NightField({ scoreboardName, ambientTrackUrl, panels }: Props) {
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const panelRef = useRef<HTMLElement>(null);
   const engineRef = useRef<Engine | null>(null);
+  const soundRef = useRef<Soundboard | null>(null);
   const spotRefs = useRef<Partial<Record<SpotKey, HTMLButtonElement | null>>>({});
   /** The spot whose button should get focus back when the panel closes. */
   const returnFocusTo = useRef<SpotKey | null>(null);
@@ -47,12 +51,15 @@ export function NightField({ scoreboardName, panels }: Props) {
   const [shown, setShown] = useState<SpotKey | null>(null);
   const [showAllPref, setShowAll] = useState(false);
   const [tip, setTip] = useState<Tip | null>(null);
+  const [muted, setMuted] = useState(true);
 
   const isMobile = useMediaQuery(MOBILE);
   // On phones the spots are too small to discover by hovering, so labels are always on.
   const showAll = showAllPref || isMobile;
 
   useEffect(() => {
+    const sound = createSoundboard(ambientTrackUrl);
+    soundRef.current = sound;
     const engine = createNightField(canvasRef.current!, {
       scoreboardName,
       skipIntro: window.matchMedia(MOBILE).matches,
@@ -63,17 +70,21 @@ export function NightField({ scoreboardName, panels }: Props) {
         setShown(key);
       },
       onHide: () => setActive(null),
+      onSound: (cue) => sound.play(cue),
     });
     engineRef.current = engine;
     return () => {
       engine.destroy();
+      sound.destroy();
       engineRef.current = null;
+      soundRef.current = null;
     };
     // The engine is created once; later prop changes are synced below.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => engineRef.current?.setScoreboardName(scoreboardName), [scoreboardName]);
+  useEffect(() => soundRef.current?.setMuted(muted), [muted]);
   // Canvas labels would be ~4px tall on a phone, so there the chips below the field name the spots.
   useEffect(() => engineRef.current?.setShowAll(showAll, !isMobile), [showAll, isMobile]);
 
@@ -223,6 +234,9 @@ export function NightField({ scoreboardName, panels }: Props) {
               {showAllPref ? "Hide spots" : "Show all spots"}
             </button>
           )}
+          <button type="button" onClick={() => setMuted((m) => !m)} aria-pressed={!muted}>
+            {muted ? "Sound off" : "Sound on"}
+          </button>
         </div>
       </div>
 

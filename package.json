@@ -17,6 +17,7 @@
     "@sanity/image-url": "^2.1.1",
     "@sanity/orderable-document-list": "^2.0.24",
     "@sanity/vision": "^6.16.0",
+    "howler": "^2.2.4",
     "next": "16.3.6",
     "next-sanity": "^13.3.4",
     "react": "19.2.8",
@@ -25,6 +26,7 @@
     "styled-components": "^6.5.3"
   },
   "devDependencies": {
+    "@types/howler": "^2.2.13",
     "@types/node": "^24.19.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",

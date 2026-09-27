@@ -25,9 +25,7 @@ import { createSceneState, type SceneState } from "./state";
 
 /** Things worth a sound. The scene only reports them; playing audio is someone else's job. */
 export type SceneSound =
-  | { type: "tower"; index: number }
-  | { type: "touch"; strength: number }
-  | { type: "swish" };
+  { type: "tower"; index: number } | { type: "touch"; strength: number } | { type: "swish" };
 
 export type NightFieldOptions = DirectorEvents & {
   scoreboardName: string;
@@ -61,7 +59,10 @@ const DRIBBLE_TOUCH_EVERY = 0.33;
  * Mounts the night field on a canvas. The canvas is sized by CSS; the engine
  * matches its backing store to the displayed size × devicePixelRatio.
  */
-export function createNightField(canvas: HTMLCanvasElement, options: NightFieldOptions): NightField {
+export function createNightField(
+  canvas: HTMLCanvasElement,
+  options: NightFieldOptions,
+): NightField {
   const ctx = canvas.getContext("2d")!;
   const state = createSceneState();
   const scenery = createScenery();
@@ -120,7 +121,8 @@ export function createNightField(canvas: HTMLCanvasElement, options: NightFieldO
   let lightTime = options.skipIntro || still ? LIT : 0; // drives the intro
   let flicker = 1;
   let flickerTimer = 0;
-  const towerWasOn = TOWERS.map(() => lightTime > 0);
+  // Starts all-off even when the intro is skipped, so listeners still hear about every tower.
+  const towerWasOn = TOWERS.map(() => false);
 
   function towerIntensity(i: number) {
     const on = INTRO_FIRST_TOWER + i * INTRO_TOWER_GAP;
