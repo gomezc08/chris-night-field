@@ -84,7 +84,7 @@ There are eight sections. Every field below is editable in Studio. Use `orderRan
 
 **`education`** (list, used by Education)
 - `school`, `degree`, `field`, `startDate`, `endDate`
-- `honors` (short text), `publications` (array of `{title, venue, url}`), `order`
+- `honors` (short text), `publications` (array of `{title, venue, url}`), `logo` (image, optional), `order`
 
 **`place`** (list, used by Places I've lived, shown as page-through cards)
 - `city`, `region`, `years` (e.g. "2019–2023"), `photo`, `note` (1–3 sentences), `order`

@@ -60,7 +60,8 @@ const EDUCATION = /* groq */ `*[_type == "education"] | order(orderRank asc){
   startDate,
   endDate,
   honors,
-  publications[]{ _key, title, venue, url }
+  publications[]{ _key, title, venue, url },
+  logo ${IMAGE}
 }`;
 
 const SKILL_GROUPS = /* groq */ `*[_type == "skillGroup"] | order(orderRank asc){

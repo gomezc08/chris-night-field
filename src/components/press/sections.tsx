@@ -160,9 +160,16 @@ export function Education({ education }: { education: Press["education"] }) {
       <ol className={styles.timeline}>
         {education.map((e) => (
           <li key={e._id} className={styles.entry}>
-            <h3 className={styles.entryTitle}>{e.school}</h3>
-            <p>{[e.degree, e.field].filter(Boolean).join(", ")}</p>
-            <p className={styles.muted}>{formatRange(e.startDate, e.endDate, "")}</p>
+            <div className={styles.entryHead}>
+              {e.logo && (
+                <SanityImage image={e.logo} width={40} aspect={1} className={styles.logo} />
+              )}
+              <div>
+                <h3 className={styles.entryTitle}>{e.school}</h3>
+                <p>{[e.degree, e.field].filter(Boolean).join(", ")}</p>
+                <p className={styles.muted}>{formatRange(e.startDate, e.endDate, "")}</p>
+              </div>
+            </div>
             {e.honors && <p className={styles.muted}>{e.honors}</p>}
             {!!e.publications?.length && (
               <>

@@ -39,7 +39,8 @@ export const education = defineType({
         }),
       ],
     }),
+    defineField({ name: "logo", type: "imageWithAlt" }),
     orderRankField({ type: "education" }),
   ],
-  preview: { select: { title: "school", subtitle: "degree" } },
+  preview: { select: { title: "school", subtitle: "degree", media: "logo" } },
 });
