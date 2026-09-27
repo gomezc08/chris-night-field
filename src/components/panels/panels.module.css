@@ -1,0 +1,290 @@
+/* Content inside the frosted scene panel. Compact type sized for a ~320px column. */
+.body {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #e8edf2;
+}
+
+.body p {
+  margin: 0 0 0.6em;
+}
+
+.body a {
+  color: #ffb547;
+  text-underline-offset: 0.18em;
+}
+
+.body ul,
+.body ol {
+  margin: 0 0 0.6em;
+  padding-left: 1.2em;
+}
+
+.muted {
+  color: #9fb0c2;
+}
+
+.small {
+  font-size: 12px;
+}
+
+.card {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 10px;
+  margin: 8px 0;
+}
+
+.list {
+  list-style: none;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.h3 {
+  margin: 0 0 2px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.subhead {
+  margin: 14px 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9fb0c2;
+}
+
+.subhead:first-child {
+  margin-top: 4px;
+}
+
+/* About */
+.profile {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+}
+
+.name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.contact {
+  font-size: 12.5px;
+}
+
+.contact p:last-child {
+  margin-bottom: 0;
+}
+
+/* Entries with a logo (experience, education) */
+.entryHead {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex: none;
+  margin-top: 2px;
+}
+
+/* Projects */
+.projectToggle {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.projectToggle .h3::after {
+  content: " +";
+  color: #9fb0c2;
+  font-weight: 400;
+}
+
+.projectToggle[aria-expanded="true"] .h3::after {
+  content: " –";
+}
+
+.badge {
+  margin-left: 6px;
+  padding: 0 6px;
+  border: 1px solid #ffb547;
+  border-radius: 999px;
+  color: #ffb547;
+  font-size: 10.5px;
+  font-weight: 500;
+  vertical-align: 1px;
+}
+
+.detail {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gallery {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.gallery img,
+.placePhoto {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  display: block;
+}
+
+.inlineLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  list-style: none;
+  margin: 6px 0 0 !important;
+  padding: 0 !important;
+}
+
+/* Chips (stack, skills) */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  list-style: none;
+  margin: 6px 0 0 !important;
+  padding: 0 !important;
+}
+
+.chips li {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 1px 9px;
+  font-size: 12px;
+  color: #cfd8e2;
+}
+
+.group {
+  margin-bottom: 12px;
+}
+
+/* Links */
+.linkCard {
+  display: block;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 9px 10px;
+  margin: 8px 0;
+  color: #e8edf2 !important;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.linkCard:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Used together with .linkCard. */
+.resume {
+  border-color: #ffb547;
+  color: #ffb547 !important;
+  font-weight: 600;
+}
+
+.resume:hover {
+  background: rgba(255, 181, 71, 0.1);
+}
+
+/* Places */
+.placeCard {
+  margin-top: 4px;
+}
+
+.placeCard .h3 {
+  margin-top: 8px;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #9fb0c2;
+}
+
+.pager button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  background: rgba(8, 12, 18, 0.5);
+  color: #e8edf2;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pager button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Credits */
+.credits {
+  text-align: center;
+}
+
+.track {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 6px 0;
+}
+
+.play {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  background: none;
+  color: #e8edf2;
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.play[aria-pressed="true"] {
+  border-color: #ffb547;
+  color: #ffb547;
+}

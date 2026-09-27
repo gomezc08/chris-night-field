@@ -100,7 +100,7 @@ const SITE_SETTINGS = /* groq */ `*[_type == "siteSettings" && _id == "siteSetti
   "ambientTrack": ambientTrack ${FILE}
 }`;
 
-// One query per section. The scene (Stage 2) fetches these individually.
+// One query per section, for pages that only need part of the content.
 export const PROFILE_QUERY = defineQuery(PROFILE);
 export const PROJECTS_QUERY = defineQuery(PROJECTS);
 export const EXPERIENCE_QUERY = defineQuery(EXPERIENCE);
@@ -111,7 +111,7 @@ export const LINKS_QUERY = defineQuery(LINKS);
 export const CREDITS_QUERY = defineQuery(CREDITS);
 export const SITE_SETTINGS_QUERY = defineQuery(SITE_SETTINGS);
 
-// Everything /press needs, in one round trip.
+// Every section in one round trip. Used by /press and the scene at /.
 export const PRESS_QUERY = defineQuery(`{
   "profile": ${PROFILE},
   "projects": ${PROJECTS},

@@ -26,5 +26,7 @@ Gomez Field: a portfolio as a 2D night soccer field. Full spec in `SPEC.md`; `re
 - Singleton queries filter on both `_type` and `_id` so TypeGen infers a single type.
 - List ordering uses `orderRank` (@sanity/orderable-document-list). Experience sorts by `startDate desc`, `orderRank` for ties.
 - Images: `<SanityImage>` (Sanity CDN loader), never Vercel's optimizer.
+- Scene layering: `src/scene/` is pure canvas (no React/Sanity imports). `components/field/NightField` hosts it; `app/page.tsx` maps each `SpotKey` to a rendered panel from `components/panels/`. Scene coordinates come from `reference/prototype.html`.
+- Run your own servers on port 3100; Chris's dev server uses 3000.
 - `@sanity/icons` v5: import from subpaths, e.g. `@sanity/icons/User`.
 - Next 16: `revalidateTag` needs a second arg; we use `{ expire: 0 }` for immediate freshness.
