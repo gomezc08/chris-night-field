@@ -5,20 +5,12 @@ import { SanityImage, type SanityImageData } from "@/components/SanityImage";
 
 import styles from "./nav.module.css";
 
-/** Round back button, fixed top-left unless `inline`. */
-export function BackButton({
-  href,
-  label,
-  inline,
-}: {
-  href: string;
-  label: string;
-  inline?: boolean;
-}) {
+/** Round back button, fixed in the top-left corner. */
+export function BackButton({ href, label }: { href: string; label: string }) {
   return (
     <Link
       href={href}
-      className={`${styles.round} ${inline ? styles.inline : styles.topLeft}`}
+      className={`${styles.round} ${styles.topLeft}`}
       aria-label={label}
       title={label}
     >
