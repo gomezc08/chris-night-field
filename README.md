@@ -21,12 +21,12 @@ The site is a night soccer field under floodlights. It loads pitch black, the fl
 
 [`/press`](http://localhost:3000/press) is the "press box": every section on one fast, plain page for recruiters, SEO, and mobile.
 
-Between visits to the spots, the player juggles and wanders over to the water bottles for a drink. Goals ripple the net and tick up the scoreboard. Sound (floodlight hum, ball touches, net swish, night ambience) is muted until you turn it on.
+Between visits to the spots, the player juggles and wanders over to the water bottles for a drink. Goals ripple the net and tick up the scoreboard. Sound is muted until you turn it on: a soft late-night lo-fi loop (or your own track from Site settings) with quiet ball touches, floodlight knocks, and the net swish.
 
 It also works for everyone:
 
 - **Keyboard and screen readers:** every spot is a labelled button ("Projects: home goal"), and panels take and return focus.
-- **Reduced motion:** with `prefers-reduced-motion`, the field is already lit and still, and spots open panels without routines.
+- **Reduced motion:** with `prefers-reduced-motion`, the field is already lit and still, and spots open panels without routines. A "Play animations" button switches the scene back on for people who have reduced motion enabled without realizing it.
 - **Phones:** under 700px the lit field is a hero with every spot outlined, section chips below it, bottom-sheet panels, and a prominent link to `/press`.
 
 ## Stack
