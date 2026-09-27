@@ -22,6 +22,8 @@ export type SceneState = {
   hover: SpotKey | null;
   active: SpotKey | null;
   showAll: boolean;
+  /** Draw section names next to the outlines when showing all spots. */
+  showLabels: boolean;
 };
 
 export function createSceneState(): SceneState {
@@ -36,5 +38,6 @@ export function createSceneState(): SceneState {
     hover: null,
     active: null,
     showAll: false,
+    showLabels: true,
   };
 }

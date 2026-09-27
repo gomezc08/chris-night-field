@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { siteMetadata } from "@/lib/metadata";
 import { NightField } from "@/components/field/NightField";
 import { PlacesPanel } from "@/components/panels/PlacesPanel";
 import { ProjectsPanel } from "@/components/panels/ProjectsPanel";
@@ -23,11 +24,7 @@ async function getContent() {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { profile, siteSettings } = await getContent();
-  return {
-    title: siteSettings?.seoTitle ?? profile?.name ?? undefined,
-    description: siteSettings?.seoDescription ?? profile?.headline ?? undefined,
-  };
+  return siteMetadata(await getContent(), "/");
 }
 
 export default async function Home() {
@@ -49,7 +46,11 @@ export default async function Home() {
     <main className={styles.main}>
       <h1 className={styles.srOnly}>{data.profile?.name ?? "Portfolio"}</h1>
       <div className={styles.frame}>
-        <NightField scoreboardName={data.siteSettings?.scoreboardName ?? "GOMEZ FC"} panels={panels} />
+        <NightField
+          scoreboardName={data.siteSettings?.scoreboardName ?? "GOMEZ FC"}
+          ambientTrackUrl={data.siteSettings?.ambientTrack?.url}
+          panels={panels}
+        />
         <p className={styles.pressLink}>
           <Link href="/press">Press box: everything on one page →</Link>
         </p>

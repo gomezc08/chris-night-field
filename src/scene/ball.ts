@@ -72,16 +72,19 @@ export function updateBall(ball: Ball, player: PlayerState, t: number, dt: numbe
   }
 }
 
-export function drawBall(ctx: CanvasRenderingContext2D, ball: Ball, player: PlayerState) {
-  if (ball.mode === "hidden") return;
-
-  // The shadow stays on the ground under the ball's path.
-  let groundY = ball.y;
-  if (ball.mode === "juggle") groundY = player.y;
+/** Where the ball's shadow falls: on the ground under its path, not under the ball itself. */
+export function ballGroundY(ball: Ball, player: PlayerState) {
+  if (ball.mode === "juggle") return player.y;
   if (ball.mode === "fly" && ball.flight) {
     const f = ball.flight;
-    groundY = f.fromY + (f.toY - f.fromY) * Math.min(1, f.progress);
+    return f.fromY + (f.toY - f.fromY) * Math.min(1, f.progress);
   }
+  return ball.y;
+}
+
+export function drawBall(ctx: CanvasRenderingContext2D, ball: Ball, player: PlayerState) {
+  if (ball.mode === "hidden") return;
+  const groundY = ballGroundY(ball, player);
 
   ctx.fillStyle = "rgba(0,0,0,.35)";
   ctx.beginPath();

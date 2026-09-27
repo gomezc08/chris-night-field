@@ -21,16 +21,21 @@ The site is a night soccer field under floodlights. It loads pitch black, the fl
 
 [`/press`](http://localhost:3000/press) is the "press box": every section on one fast, plain page for recruiters, SEO, and mobile.
 
-> **Status:** Stage 3 (player). A stick-figure player juggles at center, takes water breaks, and runs a routine at each spot before its panel opens. Sound, mobile, accessibility, and the illustrated art pass come in Stage 4.
+Between visits to the spots, the player juggles and wanders over to the water bottles for a drink. Goals ripple the net and tick up the scoreboard. Sound is muted until you turn it on: a soft late-night lo-fi loop (or your own track from Site settings) with quiet ball touches, floodlight knocks, and the net swish.
+
+It also works for everyone:
+
+- **Keyboard and screen readers:** every spot is a labelled button ("Projects: home goal"), and panels take and return focus.
+- **Phones:** under 700px the lit field is a hero with every spot outlined, section chips below it, bottom-sheet panels, and a prominent link to `/press`.
 
 ## Stack
 
 - **Next.js** (App Router, TypeScript), statically generated with tag-based revalidation.
 - **Sanity** (Free plan) for content, with Studio embedded at `/studio`.
 - **Vercel** (Hobby) for hosting.
-- **Canvas 2D** for the scene (Stage 2).
-- **Howler.js** for sound, muted by default (Stage 4).
-- **Player animation:** a procedural stick figure (Stage 3), swappable for a Rive state machine behind one interface (Stage 4).
+- **Canvas 2D** for the scene, drawn in a fixed 900 × 560 design space and scaled to fit.
+- **Howler.js** for sound, muted by default. Effects are synthesized by a script, so there's nothing to license.
+- **Player animation:** a procedural stick figure behind a `PlayerRenderer` interface, so it can be swapped for a Rive state machine or illustrated art without touching the routines.
 
 ## Running locally
 
@@ -68,6 +73,7 @@ Open [localhost:3000/press](http://localhost:3000/press) for the press box and [
 | `npm test` | Vitest: player routine and state-consistency tests. |
 | `npm run typegen` | Re-extract the schema and regenerate `src/sanity/types.ts`. Run after changing a schema or a GROQ query. |
 | `npm run seed` | Create placeholder documents in Sanity. |
+| `npx tsx scripts/generate-sounds.ts` | Regenerate the sound effects in `public/sounds/`. |
 
 ## Editing content
 
@@ -116,6 +122,7 @@ src/
                               Knows nothing about Sanity or React.
     director.ts               Player routines (step queue, open/close per spot, idle water break)
     player/                   PlayerRenderer interface + the procedural stick figure
+    sound.ts                  Howler soundboard, driven by the scene's sound cues
   components/
     field/                    React host for the scene: canvas, tooltip, controls, panel shell
     panels/                   The eight panel layouts (content from Sanity)
@@ -130,10 +137,10 @@ src/
     lib/                      Client, cached fetch, image URL builder and loader
   lib/                        Small shared helpers
 scripts/seed.ts               Placeholder content
+scripts/generate-sounds.ts    Synthesizes public/sounds/*.wav
 sanity.config.ts              Studio config
 sanity.cli.ts                 Sanity CLI and TypeGen config
 reference/                    Prototype and screenshots (source of truth for the scene)
-SPEC.md                       Build spec
 ```
 
 ## Free-tier notes
@@ -141,4 +148,5 @@ SPEC.md                       Build spec
 - **Sanity datasets on the Free plan are public.** Anything in Sanity can be read by anyone with the project ID. Never store private data there: no phone number, home address, or anything sensitive.
 - **Sanity Free** limits: 20 users, 2 datasets, 10,000 documents, 2 GROQ-powered webhooks, plus monthly API request, bandwidth, and asset storage caps. At the limit it stops serving rather than billing. Compress photos before uploading.
 - **Vercel Hobby** is free for personal, non-commercial use, with monthly bandwidth and function limits. Images are resized by Sanity's CDN, not Vercel's image optimizer, so they don't count against Vercel's image quota.
+- Sound files (about 500 KB) are only downloaded after a visitor turns sound on.
 - Pages are static and cached, so visitor traffic barely touches Sanity's API. Sanity is only queried at build time and when a publish (or the 60-second fallback) revalidates a page.
