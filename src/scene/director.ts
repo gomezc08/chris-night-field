@@ -76,6 +76,10 @@ export function createDirector(
   let nextBreak = IDLE_BREAK_MIN + Math.random() * IDLE_BREAK_SPAN;
   /** The water break is idle behaviour, so a click may interrupt it. */
   let onBreak = false;
+  /** Where he's currently running, if he's between actions and can change course. */
+  let running: SpotKey | "center" | null = null;
+  /** A spot clicked mid-action, taken up at the next moment he can change course. */
+  let pending: SpotKey | null = null;
 
   function run(steps: Step[]) {
     queue = steps.slice();
@@ -88,10 +92,38 @@ export function createDirector(
 
   const openPanel = (key: SpotKey) =>
     act(() => {
+      // Someone clicked elsewhere mid-routine: put things back and go there instead.
+      if (pending && pending !== key) {
+        const next = pending;
+        pending = null;
+        run([...CLOSE[key](), ...OPEN[next]()]);
+        return;
+      }
+      pending = null;
       phase = "open";
       state.active = key;
       events.onOpen(key);
     });
+
+  /**
+   * Running between actions, where a click can redirect him. Wraps the move steps
+   * toward a spot (or back to center); a queued click is taken up as the run starts.
+   */
+  const runTo = (target: SpotKey | "center", ...moves: Step[]): Step[] => [
+    act(() => {
+      running = target;
+      if (pending && pending !== target) {
+        const next = pending;
+        pending = null;
+        running = null;
+        run(OPEN[next]());
+      } else if (pending === target) {
+        pending = null;
+      }
+    }),
+    ...moves,
+    act(() => (running = null)),
+  ];
 
   const scoreGoal = (side: "L" | "R") => () => {
     state.ripple[side] = 1;
@@ -107,7 +139,7 @@ export function createDirector(
 
   const backToCenter = (): Step[] => [
     dribble,
-    move(CENTER[0], CENTER[1]),
+    ...runTo("center", move(CENTER[0], CENTER[1])),
     act(() => {
       ball.mode = "juggle";
       player.pose = "juggle";
@@ -123,7 +155,7 @@ export function createDirector(
     // Dribble to the bench, leave the ball, crouch, pick up the bag.
     bag: () => [
       dribble,
-      move(372, 492),
+      ...runTo("bag", move(372, 492)),
       act(() => rest(ball, player.x + player.facing * 12, player.y + 2)),
       wait(0.5, "crouch", () => {
         state.bagOnBench = false;
@@ -136,7 +168,7 @@ export function createDirector(
     // Low shot into the home goal, then celebrate.
     goalR: () => [
       dribble,
-      move(712, 305, 150),
+      ...runTo("goalR", move(712, 305, 150)),
       wait(0.22, "shoot", undefined, () => kick(ball, 856, 300, 0.35, 6, scoreGoal("R"))),
       wait(0.35, "shoot"),
       wait(1.1, "cele"),
@@ -147,11 +179,14 @@ export function createDirector(
     // Zigzag dribble with four quick cuts, then a chipped finish with a high arc.
     goalL: () => [
       dribble,
-      move(390, 262, 165),
-      move(335, 355, 165),
-      move(275, 268, 165),
-      move(215, 348, 165),
-      move(172, 305, 165),
+      ...runTo(
+        "goalL",
+        move(390, 262, 165),
+        move(335, 355, 165),
+        move(275, 268, 165),
+        move(215, 348, 165),
+        move(172, 305, 165),
+      ),
       wait(0.25, "shoot", undefined, () => kick(ball, 44, 296, 0.6, 34, scoreGoal("L"))),
       wait(0.45, "shoot"),
       wait(1.1, "cele"),
@@ -162,7 +197,7 @@ export function createDirector(
     // Jog under the scoreboard, leave the ball, hands on hips looking up.
     score: () => [
       dribble,
-      move(682, 178),
+      ...runTo("score", move(682, 178)),
       act(() => {
         rest(ball, player.x - 12, player.y + 2);
         player.facing = 1;
@@ -174,7 +209,7 @@ export function createDirector(
     // Jog to the tactics board, crouch, pick it up and study it.
     board: () => [
       dribble,
-      move(312, 490),
+      ...runTo("board", move(312, 490)),
       act(() => rest(ball, player.x + 12, player.y + 2)),
       wait(0.45, "crouch", () => (state.boardHeld = true)),
       act(() => (player.pose = "study")),
@@ -185,7 +220,7 @@ export function createDirector(
     // sprints into the box, and heads it into the home goal. They celebrate.
     flag: () => [
       dribble,
-      move(800, 470),
+      ...runTo("flag", move(800, 470)),
       act(() => {
         rest(ball, 836, 487);
         player.facing = 1;
@@ -218,7 +253,7 @@ export function createDirector(
     // Jog to the ball bag, crouch, drop the ball in.
     ballbag: () => [
       dribble,
-      move(596, 496),
+      ...runTo("ballbag", move(596, 496)),
       wait(0.5, "crouch", () => {
         ball.mode = "hidden";
         state.ballInBag = true;
@@ -230,7 +265,7 @@ export function createDirector(
     // Leave the ball at the touchline, climb the tiers, sit down.
     stands: () => [
       dribble,
-      move(372, 152),
+      ...runTo("stands", move(372, 152)),
       act(() => rest(ball, 390, 154)),
       move(372, 121, 45, "walk"),
       act(() => (player.pose = "sit")),
@@ -318,7 +353,19 @@ export function createDirector(
   // --- Public API ---
 
   function select(key: SpotKey) {
-    if (phase === "busy" && !onBreak) return false;
+    if (phase === "busy" && !onBreak) {
+      if (running) {
+        // Mid-run: change course now.
+        if (running === key) return false;
+        running = null;
+        pending = null;
+        run(OPEN[key]());
+        return true;
+      }
+      // Mid-action: finish it, then head there.
+      pending = key;
+      return true;
+    }
     let steps: Step[] = [];
     if (phase === "open") {
       if (key === state.active) return false;
@@ -329,12 +376,15 @@ export function createDirector(
     }
     phase = "busy";
     onBreak = false;
+    running = null;
+    pending = null;
     run([...steps, ...OPEN[key]()]);
     return true;
   }
 
   function close() {
     if (phase !== "open") return false;
+    pending = null;
     const key = state.active!;
     state.active = null;
     events.onHide();

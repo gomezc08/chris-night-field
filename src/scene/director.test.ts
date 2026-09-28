@@ -14,12 +14,18 @@ function world() {
   const player: PlayerState = { x: CENTER[0], y: CENTER[1], facing: 1, pose: "juggle" };
   const ball = createBall();
   const teammate = createTeammate();
-  const panel = { key: null as SpotKey | null };
+  const panel = { key: null as SpotKey | null, opened: [] as SpotKey[] };
   const director = createDirector(
     state,
     player,
     ball,
-    { onOpen: (k) => (panel.key = k), onHide: () => (panel.key = null) },
+    {
+      onOpen: (k) => {
+        panel.key = k;
+        panel.opened.push(k);
+      },
+      onHide: () => (panel.key = null),
+    },
     teammate,
   );
   let t = 0;
@@ -89,7 +95,6 @@ describe("director", () => {
   it.each(SPOT_KEYS)("opens and closes %s cleanly", (key) => {
     const w = world();
     expect(w.director.select(key)).toBe(true);
-    expect(w.director.select("bag")).toBe(false); // ignored mid-routine
     w.until(() => w.director.phase === "open");
     expectOpen(w, key);
     expect(w.player.pose).toBe(FINAL_POSE[key]);
@@ -117,6 +122,40 @@ describe("director", () => {
         expectIdle(w);
       }
     }
+  });
+
+  it("changes course when a different spot is clicked mid-run", () => {
+    const w = world();
+    w.director.select("goalR");
+    w.tick(30); // half a second into the run toward the home goal
+    expect(w.player.pose).toBe("run");
+    expect(w.director.select("board")).toBe(true);
+    w.until(() => w.director.phase === "open");
+    expectOpen(w, "board");
+    expect(w.panel.opened).toEqual(["board"]);
+    expect(w.state.homeScore).toBe(0); // never took the shot
+  });
+
+  it("finishes the current action, then heads to a spot clicked mid-action", () => {
+    const w = world();
+    w.director.select("bag");
+    w.until(() => w.player.pose === "crouch"); // picking up the bag
+    expect(w.director.select("score")).toBe(true);
+    w.until(() => w.director.phase === "open");
+    expectOpen(w, "score"); // bag went back on the bench on the way
+    expect(w.panel.opened).toEqual(["score"]); // the About panel never flashed open
+  });
+
+  it("heads straight to a spot clicked while putting things back", () => {
+    const w = world();
+    w.director.select("board");
+    w.until(() => w.director.phase === "open");
+    w.director.close();
+    w.tick(5); // crouching to prop the board back up
+    expect(w.director.select("flag")).toBe(true);
+    w.until(() => w.director.phase === "open");
+    expectOpen(w, "flag");
+    expect(w.panel.opened).toEqual(["board", "flag"]);
   });
 
   it("keeps state consistent under random clicking", () => {

@@ -13,9 +13,9 @@ The site has four pages, each with a back button:
 | `/` | Start screen: a spinning ball counts to 100% (once per visit), then **Start** and **About**. |
 | `/about` | Chris's own words about himself and the site, written in Studio. |
 | `/field` | The scene: a full-window night soccer field. |
-| `/press` | The press box, reached from the round profile button on every page. |
+| `/press` | The press box, reached from the round profile button on About and the field. |
 
-On the field, the first visit of a session starts pitch black (after that the lights are already on, and clicking any floodlight replays it), the floodlight towers click on one at a time, and a lone player juggles at the center circle. Eight objects around the field are the navigation. Clicking one sends the player over to do something, then opens a frosted panel with that section:
+On the field, the first visit of a session starts pitch black (after that the lights are already on, and clicking any floodlight replays it), the floodlight towers click on one at a time, and a lone player juggles at the center circle. Eight objects around the field are the navigation. Clicking one sends the player over to do something, then opens a panel with that section. Click another spot at any time and he changes course (or finishes what he's doing and heads there):
 
 | Spot | Section |
 |---|---|
@@ -140,7 +140,7 @@ src/
   components/
     field/                    React host for the scene: canvas, tooltip, controls, panel shell
     start/                    Loading, Start, and About screen
-    nav/                      Round back and profile buttons shared by every page
+    nav/                      Round back and profile buttons for the inner pages
     sound/                    Site-wide SoundProvider and music button (in the root layout)
     panels/                   The eight panel layouts (content from Sanity)
     press/                    Press box sections and styles
