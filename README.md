@@ -15,7 +15,7 @@ The site has four pages, each with a back button:
 | `/field` | The scene: a full-window night soccer field. |
 | `/press` | The press box, reached from the round profile button on every page. |
 
-On the field, the first visit of a session starts pitch black (after that the lights are already on, and clicking any floodlight replays it), the floodlight towers click on one at a time, and a lone player juggles at the center circle. Eight objects around the field are the navigation. Clicking one sends the player over to do something, then opens a frosted panel with that section:
+On the field, the first visit of a session starts pitch black (after that the lights are already on, and clicking any floodlight replays it), the floodlight towers click on one at a time, and a lone player juggles at the center circle. Eight objects around the field are the navigation. Clicking one sends the player over to do something, then opens a panel with that section. Click another spot at any time and he changes course (or finishes what he's doing and heads there):
 
 | Spot | Section |
 |---|---|
