@@ -73,13 +73,15 @@ function PhotoGallery({ photos, city }: { photos: Photo[]; city: string }) {
         disabled={!many}
         aria-label={many ? `${city}: next photo` : undefined}
       >
-        <SanityImage
-          image={photo}
-          width={700}
-          aspect={16 / 10}
-          sizes="(max-width: 760px) 100vw, 700px"
-          className={s.placePhoto}
-        />
+        {/* Whole photo at its own shape (landscape or portrait) inside a fixed frame. */}
+        <span className={s.photoFrame}>
+          <SanityImage
+            key={`${photo.asset?._ref}-${current}`}
+            image={photo}
+            width={700}
+            sizes="(max-width: 760px) 100vw, 700px"
+          />
+        </span>
         {many && (
           <span className={s.photoCount} aria-live="polite">
             {current + 1} / {photos.length}
@@ -97,7 +99,7 @@ function PhotoGallery({ photos, city }: { photos: Photo[]; city: string }) {
                 aria-pressed={i === current}
                 aria-label={p.alt ? `Show photo: ${p.alt}` : `Show photo ${i + 1}`}
               >
-                <SanityImage image={p} width={88} aspect={4 / 3} />
+                <SanityImage image={p} width={72} aspect={1} />
               </button>
             </li>
           ))}

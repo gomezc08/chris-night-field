@@ -222,12 +222,9 @@ export function Places({ places }: { places: Press["places"] }) {
           const [cover, ...rest] = (p.photos ?? []).filter((photo) => !!photo?.asset);
           return (
             <li key={p._id} className={styles.place}>
-              <SanityImage
-                image={cover}
-                width={400}
-                aspect={4 / 3}
-                sizes="(max-width: 720px) 100vw, 340px"
-              />
+              <div className={styles.placeCover}>
+                <SanityImage image={cover} width={400} sizes="(max-width: 720px) 100vw, 340px" />
+              </div>
               {rest.length > 0 && (
                 <div className={styles.placeThumbs}>
                   {rest.map((photo, i) => (
