@@ -120,7 +120,7 @@ export const ACCOMPLISHMENTS_QUERY = defineQuery(ACCOMPLISHMENTS);
 export const SITE_SETTINGS_QUERY = defineQuery(SITE_SETTINGS);
 export const SITE_ABOUT_QUERY = defineQuery(SITE_ABOUT);
 
-// What the start screen needs: the photo for the profile button, plus metadata.
+// What the start screen needs: the name for its heading, plus metadata.
 export const START_QUERY = defineQuery(`{
   "profile": ${PROFILE},
   "siteSettings": ${SITE_SETTINGS}

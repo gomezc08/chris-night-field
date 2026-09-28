@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { ProfileButton } from "@/components/nav/NavButtons";
 import { StartScreen } from "@/components/start/StartScreen";
 import { siteMetadata } from "@/lib/metadata";
 import { sanityFetch } from "@/sanity/lib/fetch";
@@ -20,7 +19,6 @@ export default async function StartPage() {
     <main>
       <h1 className="sr-only">{profile?.name ?? "Portfolio"}</h1>
       <StartScreen />
-      <ProfileButton photo={profile?.photo} />
     </main>
   );
 }
