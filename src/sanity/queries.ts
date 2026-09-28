@@ -75,7 +75,12 @@ const PLACES = /* groq */ `*[_type == "place"] | order(orderRank asc){
   city,
   region,
   years,
-  photo ${IMAGE},
+  // Falls back to the original single photo until the Photos list has images.
+  "photos": select(
+    count(photos) > 0 => photos[] ${IMAGE},
+    defined(photo.asset) => [photo ${IMAGE}],
+    []
+  ),
   note
 }`;
 

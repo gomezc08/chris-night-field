@@ -304,6 +304,20 @@
   gap: 1.25rem;
 }
 
+/* Extra photos for a place, as small thumbnails under the cover. */
+.placeThumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(4rem, 1fr));
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+.placeThumbs img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
 .place h3 {
   margin-top: 0.6rem;
 }

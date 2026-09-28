@@ -132,9 +132,7 @@ export function Experience({ experience }: { experience: Press["experience"] }) 
         {experience.map((e) => (
           <li key={e._id} className={styles.entry}>
             <div className={styles.entryHead}>
-              {e.logo && (
-                <SanityImage image={e.logo} width={80} className={styles.logo} />
-              )}
+              {e.logo && <SanityImage image={e.logo} width={80} className={styles.logo} />}
               <div>
                 <h3 className={styles.entryTitle}>
                   {e.role} <span className={styles.at}>at</span> {e.company}
@@ -161,9 +159,7 @@ export function Education({ education }: { education: Press["education"] }) {
         {education.map((e) => (
           <li key={e._id} className={styles.entry}>
             <div className={styles.entryHead}>
-              {e.logo && (
-                <SanityImage image={e.logo} width={80} className={styles.logo} />
-              )}
+              {e.logo && <SanityImage image={e.logo} width={80} className={styles.logo} />}
               <div>
                 <h3 className={styles.entryTitle}>{e.school}</h3>
                 <p>{[e.degree, e.field].filter(Boolean).join(", ")}</p>
@@ -177,7 +173,11 @@ export function Education({ education }: { education: Press["education"] }) {
                 <ul className={styles.plainList}>
                   {e.publications.map((pub) => (
                     <li key={pub._key}>
-                      {pub.url ? <ExternalLink href={pub.url}>{pub.title}</ExternalLink> : pub.title}
+                      {pub.url ? (
+                        <ExternalLink href={pub.url}>{pub.title}</ExternalLink>
+                      ) : (
+                        pub.title
+                      )}
                       {pub.venue && <span className={styles.muted}> · {pub.venue}</span>}
                     </li>
                   ))}
@@ -218,22 +218,37 @@ export function Places({ places }: { places: Press["places"] }) {
   return (
     <Section id="places">
       <ul className={styles.places}>
-        {places.map((p) => (
-          <li key={p._id} className={styles.place}>
-            <SanityImage
-              image={p.photo}
-              width={400}
-              aspect={4 / 3}
-              sizes="(max-width: 720px) 100vw, 340px"
-            />
-            <h3 className={styles.entryTitle}>
-              {p.city}
-              {p.region && <span className={styles.muted}>, {p.region}</span>}
-            </h3>
-            {p.years && <p className={styles.muted}>{p.years}</p>}
-            {p.note && <p>{p.note}</p>}
-          </li>
-        ))}
+        {places.map((p) => {
+          const [cover, ...rest] = (p.photos ?? []).filter((photo) => !!photo?.asset);
+          return (
+            <li key={p._id} className={styles.place}>
+              <SanityImage
+                image={cover}
+                width={400}
+                aspect={4 / 3}
+                sizes="(max-width: 720px) 100vw, 340px"
+              />
+              {rest.length > 0 && (
+                <div className={styles.placeThumbs}>
+                  {rest.map((photo, i) => (
+                    <SanityImage
+                      key={`${photo?.asset?._ref}-${i}`}
+                      image={photo}
+                      width={96}
+                      aspect={4 / 3}
+                    />
+                  ))}
+                </div>
+              )}
+              <h3 className={styles.entryTitle}>
+                {p.city}
+                {p.region && <span className={styles.muted}>, {p.region}</span>}
+              </h3>
+              {p.years && <p className={styles.muted}>{p.years}</p>}
+              {p.note && <p>{p.note}</p>}
+            </li>
+          );
+        })}
       </ul>
     </Section>
   );
