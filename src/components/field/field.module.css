@@ -54,7 +54,7 @@
   transition: opacity 0.15s;
 }
 
-/* Centered, roomy frosted card; the field stays visible (and clickable to close) around it. */
+/* Centered, roomy card in near-solid charcoal; the field stays visible (and clickable to close) around it. */
 .panel {
   position: absolute;
   top: 50%;
@@ -63,10 +63,10 @@
   max-height: min(78dvh, 760px);
   display: flex;
   flex-direction: column;
-  background: rgba(8, 12, 18, 0.72);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(22, 25, 30, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
   opacity: 0;
@@ -234,7 +234,7 @@
     bottom: 0;
     width: auto;
     max-height: 75dvh;
-    background: rgba(8, 12, 18, 0.9);
+    background: rgba(22, 25, 30, 0.98);
     border-width: 1px 0 0;
     border-radius: 16px 16px 0 0;
     padding-bottom: env(safe-area-inset-bottom);
