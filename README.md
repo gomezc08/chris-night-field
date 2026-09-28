@@ -140,7 +140,7 @@ src/
   components/
     field/                    React host for the scene: canvas, tooltip, controls, panel shell
     start/                    Loading, Start, and About screen
-    nav/                      Round back and profile buttons shared by every page
+    nav/                      Round back and profile buttons for the inner pages
     sound/                    Site-wide SoundProvider and music button (in the root layout)
     panels/                   The eight panel layouts (content from Sanity)
     press/                    Press box sections and styles
